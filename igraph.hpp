@@ -7,24 +7,26 @@
 
 namespace ig {
 
-    template<typename T>
-    class igVec;
+// Error handling
 
-    struct igException : std::runtime_error {
-        igraph_error_t errno;
+struct igException : std::runtime_error {
+    igraph_error_t errno;
 
-        explicit igException(igraph_error_t errno) :
-                std::runtime_error(igraph_strerror(errno)),
-                errno(errno) {}
-    };
+    explicit igException(igraph_error_t errno) :
+            std::runtime_error(igraph_strerror(errno)),
+            errno(errno) {}
+};
 
-    inline void igCheck(igraph_error_t error) {
-        if (error != IGRAPH_SUCCESS)
-            throw igException{error};
-    }
+inline void igCheck(igraph_error_t error) {
+    if (error != IGRAPH_SUCCESS)
+        throw igException{error};
+}
+
+// Data structures
+
+template<typename T> class igVec;
 
 #define BASE_IGRAPH_REAL
-
 #include "igraph_pmt.hpp"
 #undef BASE_IGRAPH_REAL
 typedef igVec<igraph_real_t> igRealVec;
@@ -36,7 +38,6 @@ typedef igVec<igraph_integer_t> igIntVec;
 
 #define BASE_BOOL
 #include "igraph_pmt.hpp"
-
 #undef BASE_BOOL
 typedef igVec<igraph_bool_t> igBoolVec;
 
