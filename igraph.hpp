@@ -5,23 +5,26 @@
 #include <igraph.h>
 #include <stdexcept>
 
-template<typename T> class igVec;
+namespace ig {
 
-struct igException : std::runtime_error {
-    igraph_error_t errno;
+    template<typename T>
+    class igVec;
 
-    explicit igException(igraph_error_t errno) :
-        std::runtime_error(igraph_strerror(errno)),
-        errno(errno)
-        { }
-};
+    struct igException : std::runtime_error {
+        igraph_error_t errno;
 
-inline void igCheck(igraph_error_t error) {
-    if (error != IGRAPH_SUCCESS)
-        throw igException{error};
-}
+        explicit igException(igraph_error_t errno) :
+                std::runtime_error(igraph_strerror(errno)),
+                errno(errno) {}
+    };
+
+    inline void igCheck(igraph_error_t error) {
+        if (error != IGRAPH_SUCCESS)
+            throw igException{error};
+    }
 
 #define BASE_IGRAPH_REAL
+
 #include "igraph_pmt.hpp"
 #undef BASE_IGRAPH_REAL
 typedef igVec<igraph_real_t> igRealVec;
@@ -33,7 +36,10 @@ typedef igVec<igraph_integer_t> igIntVec;
 
 #define BASE_BOOL
 #include "igraph_pmt.hpp"
+
 #undef BASE_BOOL
 typedef igVec<igraph_bool_t> igBoolVec;
+
+} // namespace ig
 
 #endif // IGCPP_IGRAPH_HPP
