@@ -6,6 +6,7 @@ This is an experimental RAII wrapper for igraph's data structures. This project 
 
  - Make it more convenient to use igraph from C++.
  - Provide minimal RAII wrappers for common igraph data structures, to simplify memory management.
+ - Provide some level of STL compatibility for igraph container types.
  - Convert igraph error codes to C++ exceptions, in support of easy memory management.
 
 ## Non-goals
