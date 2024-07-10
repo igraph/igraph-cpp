@@ -109,5 +109,12 @@ int main() {
     std::cout << "Connected? " << (g.is_connected() ? "Yes" : "No") << std::endl;
     std::cout << "Has loops? " << (g.has_loop() ? "Yes" : "No") << std::endl;
 
+    {
+        igRealMat am;
+        igraph_get_adjacency(g, am, IGRAPH_GET_ADJACENCY_BOTH, nullptr, IGRAPH_LOOPS_TWICE);
+        std::cout << "Adjacency matrix:" << std::endl;
+        igraph_matrix_print(am);
+    }
+
     return 0;
 }
