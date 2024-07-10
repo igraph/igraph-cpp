@@ -40,6 +40,7 @@ public:
     }
 
     operator TYPE(igraph_vector) *() { return &vec; }
+    operator const TYPE(igraph_vector) *() const { return &vec; }
 
     BASE *begin() { return vec.stor_begin; }
     BASE *end() { return vec.end; }

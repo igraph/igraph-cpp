@@ -80,6 +80,7 @@ public:
     }
 
     operator igraph_t *() { return &graph; }
+    operator const igraph_t *() const { return &graph; }
 
     bool is_directed() const { return igraph_is_directed(&graph); }
     igraph_integer_t vcount() const { return igraph_vcount(&graph); }

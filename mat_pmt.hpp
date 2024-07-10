@@ -53,6 +53,7 @@ public:
     }
 
     operator TYPE(igraph_matrix) *() { return &mat; }
+    operator const TYPE(igraph_matrix) *() const { return &mat; }
 
     BASE *begin() { return mat.data.stor_begin; }
     BASE *end() { return mat.data.end; }
