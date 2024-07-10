@@ -72,5 +72,16 @@ int main() {
     // Print the sum of its elements
     std::cout << igraph_matrix_sum(mat) << std::endl;
 
+    // Create a graph from an edge list
+    igGraph g(igIntVec{0,1, 0,2, 2,3});
+    std::cout << "Vertex count: " << g.vcount() << std::endl;
+
+    // Print its degrees
+    {
+        igIntVec deg;
+        igraph_degree(g, deg, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
+        std::cout << "Degrees: " << deg << std::endl;
+    }
+
     return 0;
 }

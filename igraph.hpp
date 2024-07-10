@@ -51,6 +51,41 @@ using igIntMat = igMat<igraph_integer_t>;
 using igBoolVec = igVec<igraph_bool_t>;
 using igBoolMat = igMat<igraph_bool_t>;
 
+
+class igGraph {
+    igraph_t graph;
+    bool active = true;
+
+public:
+    explicit igGraph(igraph_integer_t n = 0, bool directed = false) {
+        igCheck(igraph_empty(&graph, n, directed));
+    }
+
+    explicit igGraph(const igraph_vector_int_t *edges, igraph_integer_t n = 0, bool directed = false) {
+        igCheck(igraph_create(&graph, edges, n, directed));
+    }
+
+    igGraph(const igGraph &g) {
+        igCheck(igraph_copy(&graph, &g.graph));
+    }
+
+    igGraph(igGraph &&g) {
+        graph = g.graph;
+        active = false;
+    }
+
+    ~igGraph() {
+        if (active)
+            igraph_destroy(&graph);
+    }
+
+    operator igraph_t *() { return &graph; }
+
+    bool is_directed() const { return igraph_is_directed(&graph); }
+    igraph_integer_t vcount() const { return igraph_vcount(&graph); }
+    igraph_integer_t ecount() const { return igraph_ecount(&graph); }
+};
+
 } // namespace ig
 
 #endif // IGCPP_IGRAPH_HPP
