@@ -23,6 +23,8 @@ std::ostream & operator << (std::ostream &out, const igVec<T> &v) {
 
 int main() {
 
+    ///// Examples with vectors /////
+
     // igRealVec is a RAII wrapper to igraph_vector_t.
     // When it goes out of scope, it is properly destroyed.
     // igRealVec is a convenience name for igVec<igraph_real_t>.
@@ -60,21 +62,40 @@ int main() {
     std::cout << v << std::endl;
 
     // Create an integer and a boolean vector using a list initializer.
-    igIntVec iv = {4, 3, 0};
-    igBoolVec bv = {true, false, true, false};
-    std::cout << iv << std::endl;
-    std::cout << bv << std::endl;
+    {
+        igIntVec iv = {4, 3, 0};
+        igBoolVec bv = {true, false, true, false};
+        std::cout << iv << std::endl;
+        std::cout << bv << std::endl;
+    }
+
+    ///// Examples with matrices /////
+    std::cout << std::endl;
 
     // Create a matrix.
     igRealMat mat = {{1, 2, 3},
                      {4, 5, 6}};
 
-    // Print the sum of its elements
-    std::cout << igraph_matrix_sum(mat) << std::endl;
+    // Print the matrix using igraph features.
+    std::cout << "Matrix:" << std::endl;
+    igraph_matrix_print(mat);
+
+    // Print the sum of its elements.
+    std::cout << "Matrix sum: " << igraph_matrix_sum(mat) << std::endl;
+
+    // Transpose and print again.
+    igraph_matrix_transpose(mat);
+    std::cout << "Transposed matrix:" << std::endl;
+    igraph_matrix_print(mat);
+
+    std::cout << "Matrix size after transpose: " << mat.nrow() << 'x' << mat.ncol() << std::endl;
+
+    ///// Examples with graphs /////
+    std::cout << std::endl;
 
     // Create a graph from an edge list
     igGraph g(igIntVec{0,1, 0,2, 2,3});
-    std::cout << "Vertex count: " << g.vcount() << std::endl;
+    std::cout << "Vertex count: " << g.vcount() << ", edge count: " << g.ecount() << std::endl;
 
     // Print its degrees
     {
