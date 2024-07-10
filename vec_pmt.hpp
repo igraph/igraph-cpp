@@ -9,7 +9,7 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    explicit igVec<BASE>(igraph_integer_t n = 0) {
+    explicit igVec<BASE>(size_type n = 0) {
         FUNCTION(igraph_vector, init)(&vec, n);
     }
 

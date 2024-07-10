@@ -3,6 +3,8 @@
 #define IGCPP_IGRAPH_HPP
 
 #include <igraph.h>
+
+#include <cassert>
 #include <stdexcept>
 #include <utility>
 
@@ -26,21 +28,28 @@ inline void igCheck(igraph_error_t error) {
 // Data structures
 
 template<typename T> class igVec;
+template<typename T> class igMat;
 
 #define BASE_IGRAPH_REAL
 #include "vec_pmt.hpp"
+#include "mat_pmt.hpp"
 #undef BASE_IGRAPH_REAL
-typedef igVec<igraph_real_t> igRealVec;
+using igRealVec = igVec<igraph_real_t>;
+using igRealMat = igMat<igraph_real_t>;
 
 #define BASE_INT
 #include "vec_pmt.hpp"
+#include "mat_pmt.hpp"
 #undef BASE_INT
-typedef igVec<igraph_integer_t> igIntVec;
+using igIntVec = igVec<igraph_integer_t>;
+using igIntMat = igMat<igraph_integer_t>;
 
 #define BASE_BOOL
 #include "vec_pmt.hpp"
+#include "mat_pmt.hpp"
 #undef BASE_BOOL
-typedef igVec<igraph_bool_t> igBoolVec;
+using igBoolVec = igVec<igraph_bool_t>;
+using igBoolMat = igMat<igraph_bool_t>;
 
 } // namespace ig
 

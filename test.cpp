@@ -47,8 +47,12 @@ int main() {
         std::cout << el << ' ';
     std::cout << std::endl;
 
-    // Fill the vector with an increasing range of elements and print it.
+    // Use standard C++ features to fill the vector with an increasing sequence.
     std::iota(v.begin(), v.end(), 3);
+    std::cout << v << std::endl;
+
+    // Use igraph features to fill the vector with an increasing sequence.
+    igraph_vector_range(v, -3, 3);
     std::cout << v << std::endl;
 
     // Erase the 2nd and 3rd elements.
@@ -60,6 +64,13 @@ int main() {
     igBoolVec bv = {true, false, true, false};
     std::cout << iv << std::endl;
     std::cout << bv << std::endl;
+
+    // Create a matrix.
+    igRealMat mat = {{1, 2, 3},
+                     {4, 5, 6}};
+
+    // Print the sum of its elements
+    std::cout << igraph_matrix_sum(mat) << std::endl;
 
     return 0;
 }
