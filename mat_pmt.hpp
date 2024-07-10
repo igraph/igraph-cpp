@@ -10,7 +10,7 @@ public:
     using difference_type = igraph_integer_t;
 
     explicit igMat<BASE>(size_type n = 0, size_type m = 0) {
-        FUNCTION(igraph_matrix, init)(&mat, n, m);
+        igCheck(FUNCTION(igraph_matrix, init)(&mat, n, m));
     }
 
     igMat<BASE>(igMat<BASE> &&other) {
@@ -19,11 +19,11 @@ public:
     }
 
     igMat<BASE>(const igMat<BASE> &other) {
-        FUNCTION(igraph_matrix, init_copy)(&mat, &other.mat);
+        igCheck(FUNCTION(igraph_matrix, init_copy)(&mat, &other.mat));
     }
 
     igMat<BASE>(const TYPE(igraph_matrix) *v) {
-        FUNCTION(igraph_matrix, init_copy)(&mat, v);
+        igCheck(FUNCTION(igraph_matrix, init_copy)(&mat, v));
     }
 
     igMat<BASE> & operator = (const igMat<BASE> &other) {
@@ -34,7 +34,7 @@ public:
     igMat<BASE>(std::initializer_list<std::initializer_list<BASE>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;
-        FUNCTION(igraph_matrix, init)(&mat, n, m);
+        igCheck(FUNCTION(igraph_matrix, init)(&mat, n, m));
 
         size_type i = 0;
         for (const auto &row : values) {

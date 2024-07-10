@@ -10,7 +10,7 @@ public:
     using difference_type = igraph_integer_t;
 
     explicit igVec<BASE>(size_type n = 0) {
-        FUNCTION(igraph_vector, init)(&vec, n);
+        igCheck(FUNCTION(igraph_vector, init)(&vec, n));
     }
 
     igVec<BASE>(igVec<BASE> &&other) {
@@ -19,11 +19,11 @@ public:
     }
 
     igVec<BASE>(const igVec<BASE> &other) {
-        FUNCTION(igraph_vector, init_copy)(&vec, &other.vec);
+        igCheck(FUNCTION(igraph_vector, init_copy)(&vec, &other.vec));
     }
 
     igVec<BASE>(const TYPE(igraph_vector) *v) {
-        FUNCTION(igraph_vector, init_copy)(&vec, v);
+        igCheck(FUNCTION(igraph_vector, init_copy)(&vec, v));
     }
 
     igVec<BASE>(std::initializer_list<BASE> list) {
