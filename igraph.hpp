@@ -57,6 +57,9 @@ class igGraph {
     bool active = true;
 
 public:
+    // NOTE! Takes ownership of the graph, which must already be initialized.
+    explicit igGraph(igraph_t &g) : graph(g) { }
+
     explicit igGraph(igraph_integer_t n = 0, bool directed = false) {
         igCheck(igraph_empty(&graph, n, directed));
     }
