@@ -65,6 +65,9 @@ public:
     size_type size() const { return mat.data.end - mat.data.stor_begin; }
     size_type capacity() const { return mat.data.stor_end - mat.data.stor_begin; }
 
+    size_type nrow() const { return mat.nrow; }
+    size_type ncol() const { return mat.ncol; }
+
     BASE & operator [] (size_type i) { return begin()[i]; }
     const BASE & operator [] (size_type i) const { return begin()[i]; }
 
