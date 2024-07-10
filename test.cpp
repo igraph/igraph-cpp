@@ -104,5 +104,10 @@ int main() {
         std::cout << "Degrees: " << deg << std::endl;
     }
 
+    std::cout << "Mean degree: " << g.mean_degree() << std::endl;
+    std::cout << "Tree? " << (g.is_tree() ? "Yes" : "No") << std::endl;
+    std::cout << "Connected? " << (g.is_connected() ? "Yes" : "No") << std::endl;
+    std::cout << "Has loops? " << (g.has_loop() ? "Yes" : "No") << std::endl;
+
     return 0;
 }
