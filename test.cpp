@@ -118,9 +118,9 @@ int main() {
         igraph_t ig;
         igraph_kary_tree(&ig, 5, 2, IGRAPH_TREE_UNDIRECTED);
 
-        // NOTE! Here 'g' takes ownership of 'ig', and will destroy it when it goes out of scope.
-        // Do not use 'ig' anymore.
-        const igGraph g(ig);
+        // NOTE! Here 'g' "captures" 'ig', i.e. takes ownership of it,
+        // and will destroy it when it goes out of scope.
+        const igGraph g(igCapture(ig));
 
         igRealVec closeness;
         igraph_closeness(g, closeness, nullptr, nullptr, igraph_vss_all(), IGRAPH_ALL, nullptr, true);

@@ -25,7 +25,18 @@ inline void igCheck(igraph_error_t error) {
         throw igException{error};
 }
 
-// Data structures
+// Support structures
+
+template<typename T>
+struct igCaptureType {
+    T &obj;
+    explicit igCaptureType(T &obj) : obj(obj) { }
+};
+
+template<typename T>
+inline igCaptureType<T> igCapture(T &obj) { return igCaptureType<T>(obj); }
+
+// Main data structures
 
 template<typename T> class igVec;
 template<typename T> class igMat;
@@ -57,8 +68,7 @@ class igGraph {
     bool active = true;
 
 public:
-    // NOTE! Takes ownership of the graph, which must already be initialized.
-    explicit igGraph(igraph_t &g) : graph(g) { }
+    explicit igGraph(igCaptureType<igraph_t> g) : graph(g.obj) { }
 
     explicit igGraph(igraph_integer_t n = 0, bool directed = false) {
         igCheck(igraph_empty(&graph, n, directed));
