@@ -5,9 +5,9 @@ template<> class igVec<BASE> {
     TYPE(igraph_vector) vec;
 
 public:
-    typedef BASE value_type;
-    typedef igraph_integer_t size_type;
-    typedef igraph_integer_t difference_type;
+    using value_type = BASE;
+    using size_type = igraph_integer_t;
+    using difference_type = igraph_integer_t;
 
     explicit igVec<BASE>(igraph_integer_t n = 0) {
         FUNCTION(igraph_vector, init)(&vec, n);
@@ -45,6 +45,9 @@ public:
 
     BASE *data() { return begin(); }
 
+    BASE &back() { return *(vec.end-1); }
+    const BASE &back() const { return *(vec.end-1); }
+
     size_type size() const { return vec.end - vec.stor_begin; }
     size_type capacity() const { return vec.stor_end - vec.stor_begin; }
 
@@ -52,11 +55,22 @@ public:
     const BASE & operator [] (size_type i) const { return begin()[i]; }
 
     void clear() { FUNCTION(igraph_vector, clear)(&vec); }
-    void resize(size_type newsize) { igCheck(FUNCTION(igraph_vector, resize)(&vec, newsize)); }
-    void reserve(size_type newsize) { igCheck(FUNCTION(igraph_vector, reserve)(&vec, newsize)); }
+    void resize(size_type size) { igCheck(FUNCTION(igraph_vector, resize)(&vec, size)); }
+    void reserve(size_type capacity) { igCheck(FUNCTION(igraph_vector, reserve)(&vec, capacity)); }
+    void shrink_to_fit() { FUNCTION(igraph_vector, resize_min)(&vec); }
 
     void push_back(BASE elem) { igCheck(FUNCTION(igraph_vector, push_back)(&vec, elem)); }
     BASE pop_back() { return FUNCTION(igraph_vector, pop_back)(&vec); }
+
+    BASE *erase(const BASE *pos) {
+        FUNCTION(igraph_vector, remove)(&vec, pos - vec.stor_begin);
+        return const_cast<BASE *>(pos);
+    }
+
+    BASE *erase(const BASE *first, const BASE *last) {
+        FUNCTION(igraph_vector, remove_section)(&vec, first - vec.stor_begin, last - vec.stor_begin);
+        return const_cast<BASE *>(first);
+    }
 
     void swap(igVec<BASE> &other) { igCheck(FUNCTION(igraph_vector, swap)(&vec, &other.vec)); }
 };
