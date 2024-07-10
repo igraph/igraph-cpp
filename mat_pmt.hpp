@@ -9,7 +9,7 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    igMat<BASE>(size_type n = 0, size_type m = 0) {
+    explicit igMat<BASE>(size_type n = 0, size_type m = 0) {
         FUNCTION(igraph_matrix, init)(&mat, n, m);
     }
 
