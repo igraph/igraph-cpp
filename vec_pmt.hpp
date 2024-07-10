@@ -26,6 +26,10 @@ public:
         FUNCTION(igraph_vector, init_copy)(&vec, v);
     }
 
+    igVec<BASE>(std::initializer_list<BASE> list) {
+        igCheck(FUNCTION(igraph_vector, init_array)(&vec, list.begin(), list.size()));
+    }
+
     igVec<BASE> & operator = (const igVec<BASE> &other) {
         igCheck(FUNCTION(igraph_vector, update)(&vec, &other.vec));
         return *this;

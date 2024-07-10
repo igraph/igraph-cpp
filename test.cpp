@@ -8,6 +8,19 @@
 // We do not use igraph:: to avoid conflict with the igraphpp project.
 using namespace ig;
 
+// Helper function to print igVec objects. Since igVec is templated, it is easy
+// to use a single definition for all of its variants.
+template<typename T>
+std::ostream & operator << (std::ostream &out, const igVec<T> &v) {
+    for (auto it = v.begin(); it != v.end() - 1; ++it) {
+        std::cout << *it << ' ';
+    }
+    if (v.size() > 0) {
+        std::cout << v.back();
+    }
+    return out;
+}
+
 int main() {
 
     // igRealVec is a RAII wrapper to igraph_vector_t.
@@ -36,15 +49,17 @@ int main() {
 
     // Fill the vector with an increasing range of elements and print it.
     std::iota(v.begin(), v.end(), 3);
-    for (auto el : v)
-        std::cout << el << ' ';
-    std::cout << std::endl;
+    std::cout << v << std::endl;
 
     // Erase the 2nd and 3rd elements.
     v.erase(v.begin() + 1, v.begin() + 3);
-    for (auto el : v)
-        std::cout << el << ' ';
-    std::cout << std::endl;
+    std::cout << v << std::endl;
+
+    // Create an integer and a boolean vector using a list initializer.
+    igIntVec iv = {4, 3, 0};
+    igBoolVec bv = {true, false, true, false};
+    std::cout << iv << std::endl;
+    std::cout << bv << std::endl;
 
     return 0;
 }

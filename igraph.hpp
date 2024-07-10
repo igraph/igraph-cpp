@@ -4,6 +4,7 @@
 
 #include <igraph.h>
 #include <stdexcept>
+#include <utility>
 
 namespace ig {
 
