@@ -26,7 +26,11 @@ public:
     }
 
     igMat<BASE>(igMat<BASE> &&other) {
-        mat = other.mat;
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            mat = other.mat;
+        }
         other.ptr = nullptr;
     }
 

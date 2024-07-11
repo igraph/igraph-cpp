@@ -109,9 +109,13 @@ public:
         igCheck(igraph_copy(ptr, g.ptr));
     }
 
-    igGraph(igGraph &&g) {
-        graph = g.graph;
-        ptr = nullptr;
+    igGraph(igGraph &&other) {
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            graph = other.graph;
+        }
+        other.ptr = nullptr;
     }
 
     ~igGraph() {

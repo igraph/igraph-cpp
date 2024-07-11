@@ -34,7 +34,11 @@ public:
     }
 
     igVec<BASE>(igVec<BASE> &&other) {
-        vec = other.vec;
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            vec = other.vec;
+        }
         other.ptr = nullptr;
     }
 

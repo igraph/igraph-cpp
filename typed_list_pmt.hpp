@@ -24,7 +24,11 @@ public:
     }
 
     LIST_TYPE(LIST_TYPE &&other) {
-        list = other.list;
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            list = other.list;
+        }
         other.ptr = nullptr;
     }
 
