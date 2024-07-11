@@ -50,15 +50,18 @@ inline igAliasType<T> igAlias(T &obj) { return igAliasType<T>(obj); }
 template<typename T> class igVec;
 template<typename T> class igMat;
 template<typename T> class igVecList;
+template<typename T> class igMatList;
 
 #define BASE_IGRAPH_REAL
 #include "vec_pmt.hpp"
 #include "mat_pmt.hpp"
 #include "vec_list_pmt.hpp"
+#include "mat_list_pmt.hpp"
 #undef BASE_IGRAPH_REAL
 using igRealVec = igVec<igraph_real_t>;
 using igRealMat = igMat<igraph_real_t>;
 using igRealVecList = igVecList<igraph_real_t>;
+using igRealMatList = igMatList<igraph_real_t>;
 
 #define BASE_INT
 #include "vec_pmt.hpp"
