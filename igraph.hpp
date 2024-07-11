@@ -72,11 +72,9 @@ using igIntVecList = igVecList<igraph_integer_t>;
 #define BASE_BOOL
 #include "vec_pmt.hpp"
 #include "mat_pmt.hpp"
-#include "vec_list_pmt.hpp"
 #undef BASE_BOOL
 using igBoolVec = igVec<igraph_bool_t>;
 using igBoolMat = igMat<igraph_bool_t>;
-using igBoolVecList = igVecList<igraph_bool_t>;
 
 
 class igGraph {

@@ -149,5 +149,20 @@ int main() {
         std::cerr << "Caught exception: " << ex.what() << std::endl;
     }
 
+    igraph_rng_seed(igraph_rng_default(), 42);
+    {
+        igraph_t ig;
+        igraph_erdos_renyi_game_gnp(&ig, 10, 0.5, IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
+        igGraph g(igCapture(ig));
+
+        igVecList<igraph_integer_t> list;
+        igraph_maximal_cliques(g, list, -1, -1);
+
+        std::cout << "\nMaximal cliques:" << std::endl;
+        for (int i=0; i < list.size(); i++) {
+            std::cout << list[i] << std::endl;
+        }
+    }
+
     return 0;
 }

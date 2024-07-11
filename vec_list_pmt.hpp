@@ -1,7 +1,6 @@
 
 #define VECTOR_LIST
 #include <igraph_pmt.h>
-#include <igraph_typed_list_pmt.h>
 
 template<> class igVecList<BASE> {
     TYPE list;
