@@ -17,6 +17,8 @@ template<> class igVec<BASE> {
 
     bool is_alias() const { return ptr != &vec; }
 
+    friend class igVecList<BASE>;
+
 public:
     using value_type = BASE;
     using iterator = BASE *;
@@ -83,7 +85,7 @@ public:
     void reserve(size_type capacity) { igCheck(FUNCTION(igraph_vector, reserve)(ptr, capacity)); }
     void shrink_to_fit() { FUNCTION(igraph_vector, resize_min)(ptr); }
 
-    void push_back(BASE elem) { igCheck(FUNCTION(igraph_vector, push_back)(ptr, elem)); }
+    void push_back(value_type elem) { igCheck(FUNCTION(igraph_vector, push_back)(ptr, elem)); }
     value_type pop_back() { return FUNCTION(igraph_vector, pop_back)(ptr); }
 
     iterator erase(const_iterator pos) {

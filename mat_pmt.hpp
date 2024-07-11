@@ -9,6 +9,8 @@ template<> class igMat<BASE> {
 
     bool is_alias() const { return ptr != &mat; }
 
+    friend class igMatList<BASE>;
+
 public:
     using value_type = BASE;
     using iterator = BASE *;

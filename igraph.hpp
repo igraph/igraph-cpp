@@ -5,6 +5,7 @@
 #include <igraph.h>
 
 #include <cassert>
+#include <iterator>
 #include <stdexcept>
 #include <utility>
 
@@ -29,12 +30,12 @@ inline void igCheck(igraph_error_t error) {
 
 template<typename T>
 struct igCaptureType {
-    T &obj;
-    explicit igCaptureType(T &obj) : obj(obj) { }
+    const T &obj;
+    explicit igCaptureType(const T &obj) : obj(obj) { }
 };
 
 template<typename T>
-inline igCaptureType<T> igCapture(T &obj) { return igCaptureType<T>(obj); }
+inline igCaptureType<T> igCapture(const T &obj) { return igCaptureType<T>(obj); }
 
 template<typename T>
 struct igAliasType {

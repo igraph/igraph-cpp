@@ -12,7 +12,7 @@ using namespace ig;
 // to use a single definition for all of its variants.
 template<typename T>
 std::ostream & operator << (std::ostream &out, const igVec<T> &v) {
-    for (auto it = v.begin(); it != v.end() - 1; ++it) {
+    for (auto it = v.begin(); it < v.end() - 1; ++it) {
         std::cout << *it << ' ';
     }
     if (v.size() > 0) {
@@ -159,8 +159,23 @@ int main() {
         igraph_maximal_cliques(g, list, -1, -1);
 
         std::cout << "\nMaximal cliques:" << std::endl;
-        for (int i=0; i < list.size(); i++) {
-            std::cout << list[i] << std::endl;
+        for (const auto &vec : list) {
+            std::cout << '(' << vec << ')' << std::endl;
+        }
+
+        // Remove the last element
+        list.pop_back();
+
+        // Add a new empty element
+        list.push_back_new();
+
+        // Add another element
+        list.push_back(igIntVec{1,2,3});
+
+        // Print again
+        std::cout << "\nModified vector list:" << std::endl;
+        for (const auto &vec : list) {
+            std::cout << '(' << vec << ')' << std::endl;
         }
     }
 
