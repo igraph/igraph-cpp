@@ -47,6 +47,18 @@ public:
         return *this;
     }
 
+    igMat<BASE> & operator = (igMat<BASE> &&other) {
+        if (! is_alias())
+            FUNCTION(igraph_matrix, destroy)(ptr);
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            mat = other.mat;
+        }
+        other.ptr = nullptr;
+        return *this;
+    }
+
     igMat<BASE>(std::initializer_list<std::initializer_list<BASE>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;

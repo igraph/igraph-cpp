@@ -118,6 +118,10 @@ public:
         other.ptr = nullptr;
     }
 
+    igGraph & operator = (const igGraph &) = delete;
+
+    igGraph & operator = (igGraph &&) = delete;
+
     ~igGraph() {
         if (! is_alias())
             igraph_destroy(ptr);

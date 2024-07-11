@@ -59,6 +59,18 @@ public:
         return *this;
     }
 
+    igVec<BASE> & operator = (igVec<BASE> &&other) {
+        if (! is_alias())
+            FUNCTION(igraph_vector, destroy)(ptr);
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            vec = other.vec;
+        }
+        other.ptr = nullptr;
+        return *this;
+    }
+
     ~igVec<BASE>() {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);

@@ -36,6 +36,8 @@ public:
 
     LIST_TYPE & operator = (const LIST_TYPE &other) = delete;
 
+    LIST_TYPE & operator = (LIST_TYPE &&other) = delete;
+
     ~LIST_TYPE() {
         if (! is_alias())
             FUNCTION(destroy)(ptr);
