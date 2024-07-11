@@ -36,6 +36,15 @@ struct igCaptureType {
 template<typename T>
 inline igCaptureType<T> igCapture(T &obj) { return igCaptureType<T>(obj); }
 
+template<typename T>
+struct igAliasType {
+    T &obj;
+    explicit igAliasType(T &obj) : obj(obj) { }
+};
+
+template<typename T>
+inline igAliasType<T> igAlias(T &obj) { return igAliasType<T>(obj); }
+
 // Main data structures
 
 template<typename T> class igVec;
@@ -65,99 +74,108 @@ using igBoolMat = igMat<igraph_bool_t>;
 
 class igGraph {
     igraph_t graph;
-    bool active = true;
+    igraph_t *ptr = &graph;
+
+    bool is_alias() const {
+        return ptr != &graph;
+    }
 
 public:
     explicit igGraph(igCaptureType<igraph_t> g) : graph(g.obj) { }
+    explicit igGraph(igAliasType<igraph_t> g) : ptr(&g.obj) { }
+
+    explicit igGraph(const igraph_t *g) {
+        igCheck(igraph_copy(ptr, g));
+    }
 
     explicit igGraph(igraph_integer_t n = 0, bool directed = false) {
-        igCheck(igraph_empty(&graph, n, directed));
+        igCheck(igraph_empty(ptr, n, directed));
     }
 
     explicit igGraph(const igraph_vector_int_t *edges, igraph_integer_t n = 0, bool directed = false) {
-        igCheck(igraph_create(&graph, edges, n, directed));
+        igCheck(igraph_create(ptr, edges, n, directed));
     }
 
     igGraph(const igGraph &g) {
-        igCheck(igraph_copy(&graph, &g.graph));
+        igCheck(igraph_copy(ptr, g.ptr));
     }
 
     igGraph(igGraph &&g) {
         graph = g.graph;
-        active = false;
+        ptr = nullptr;
     }
 
     ~igGraph() {
-        if (active)
-            igraph_destroy(&graph);
+        if (! is_alias())
+            igraph_destroy(ptr);
     }
 
-    operator igraph_t *() { return &graph; }
-    operator const igraph_t *() const { return &graph; }
+    operator igraph_t *() { return ptr; }
+    operator const igraph_t *() const { return ptr; }
 
-    bool is_directed() const { return igraph_is_directed(&graph); }
-    igraph_integer_t vcount() const { return igraph_vcount(&graph); }
-    igraph_integer_t ecount() const { return igraph_ecount(&graph); }
+    bool is_directed() const { return igraph_is_directed(ptr); }
+    igraph_integer_t vcount() const { return igraph_vcount(ptr); }
+    igraph_integer_t ecount() const { return igraph_ecount(ptr); }
 
     // Convenience access to basic properties (mostly those that are cached).
 
     bool is_connected(igraph_connectedness_t mode = IGRAPH_WEAK) const {
         igraph_bool_t res;
-        igCheck(igraph_is_connected(&graph, &res, mode));
+        igCheck(igraph_is_connected(ptr, &res, mode));
         return res;
     }
 
     bool is_simple() const {
         igraph_bool_t res;
-        igCheck(igraph_is_simple(&graph, &res));
+        igCheck(igraph_is_simple(ptr, &res));
         return res;
     }
 
     bool has_loop() const {
         igraph_bool_t res;
-        igCheck(igraph_has_loop(&graph, &res));
+        igCheck(igraph_has_loop(ptr, &res));
         return res;
     }
 
     bool has_multi() const {
         igraph_bool_t res;
-        igCheck(igraph_has_multiple(&graph, &res));
+        igCheck(igraph_has_multiple(ptr, &res));
         return res;
     }
 
     bool has_mutual(bool loops = false) const {
         igraph_bool_t res;
-        igCheck(igraph_has_mutual(&graph, &res, loops));
+        igCheck(igraph_has_mutual(ptr, &res, loops));
         return res;
     }
 
     bool is_tree(igraph_neimode_t mode = IGRAPH_ALL) const {
         igraph_bool_t res;
-        igCheck(igraph_is_tree(&graph, &res, nullptr, mode));
+        igCheck(igraph_is_tree(ptr, &res, nullptr, mode));
         return res;
     }
 
     bool is_forest(igraph_neimode_t mode = IGRAPH_ALL) const {
         igraph_bool_t res;
-        igCheck(igraph_is_forest(&graph, &res, nullptr, mode));
+        igCheck(igraph_is_forest(ptr, &res, nullptr, mode));
         return res;
     }
 
     bool is_dag() const {
         igraph_bool_t res;
-        igCheck(igraph_is_dag(&graph, &res));
+        igCheck(igraph_is_dag(ptr, &res));
         return res;
     }
 
     bool is_acyclic() const {
         igraph_bool_t res;
-        igCheck(igraph_is_acyclic(&graph, &res));
+        igCheck(igraph_is_acyclic(ptr, &res));
         return res;
     }
 
     igraph_real_t mean_degree(bool loops = true) const {
         igraph_real_t res;
-        igCheck(igraph_mean_degree(&graph, &res, loops));
+        igCheck(igraph_mean_degree(ptr, &res, loops));
         return res;
     }
 };
