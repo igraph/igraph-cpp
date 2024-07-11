@@ -14,7 +14,7 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    struct iterator;
+    class iterator;
 
     explicit LIST_TYPE(igCaptureType<igraph_type> tl) : list(tl.obj) { }
     explicit LIST_TYPE(igAliasType<igraph_type> tl) : ptr(&tl.obj) { }
@@ -58,8 +58,6 @@ public:
 
     iterator begin();
     iterator end();
-    const iterator begin() const;
-    const iterator end() const;
 
     void push_back(value_type &t) {
         igCheck(FUNCTION(push_back)(ptr, t));
@@ -155,7 +153,5 @@ public:
 
 LIST_TYPE::iterator LIST_TYPE::begin() { return ptr->stor_begin; }
 LIST_TYPE::iterator LIST_TYPE::end() { return ptr->end; }
-const LIST_TYPE::iterator LIST_TYPE::begin() const { return ptr->stor_begin; }
-const LIST_TYPE::iterator LIST_TYPE::end() const { return ptr->end; }
 
 #include <igraph_pmt_off.h>

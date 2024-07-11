@@ -14,7 +14,7 @@ template<> class igMat<BASE> {
 public:
     using value_type = BASE;
     using iterator = BASE *;
-    using const_iterator = const iterator;
+    using const_iterator = const BASE *;
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
