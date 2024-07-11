@@ -1,6 +1,14 @@
 
 #include <igraph_pmt.h>
 
+// This wrapper class can operate in two modes, and can switch between them dynamically
+// as needed.
+//  - It can own an igraph_vector_t, meaning that it is responsible for destroying it.
+//    In this case ptr points to the internal vec object, which is initialized.
+//  - It can alias an igraph_vector_t, essentially act as a reference to it. In this
+//    case ptr is pointing to the external vector, and the destructor does not do anything.
+// To create an igVec that aliases v, use igVec(igAlias(v)). To take over the ownership of
+// v's data, use igVec(igCapture(v)). In the latter case, v must no longer be used directly.
 template<> class igVec<BASE> {
     TYPE(igraph_vector) vec;
     TYPE(igraph_vector) *ptr = &vec;
