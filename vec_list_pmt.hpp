@@ -3,8 +3,10 @@
 #include <igraph_pmt.h>
 
 template<> class igVecList<BASE> {
-    TYPE list;
-    TYPE *ptr = &list;
+    using igraph_type = TYPE;
+
+    igraph_type list;
+    igraph_type *ptr = &list;
 
     bool is_alias() const { return ptr != &list; }
 
@@ -13,8 +15,8 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    explicit igVecList<BASE>(igCaptureType<TYPE> vl) : list(vl.obj) { }
-    explicit igVecList<BASE>(igAliasType<TYPE> vl) : ptr(&vl.obj) { }
+    explicit igVecList<BASE>(igCaptureType<igraph_type> vl) : list(vl.obj) { }
+    explicit igVecList<BASE>(igAliasType<igraph_type> vl) : ptr(&vl.obj) { }
 
     explicit igVecList<BASE>(size_type n = 0) {
         igCheck(FUNCTION(init)(ptr, n));

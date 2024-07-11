@@ -2,18 +2,22 @@
 #include <igraph_pmt.h>
 
 template<> class igMat<BASE> {
-    TYPE(igraph_matrix) mat;
-    TYPE(igraph_matrix) *ptr = &mat;
+    using igraph_type = TYPE(igraph_matrix);
+
+    igraph_type mat;
+    igraph_type *ptr = &mat;
 
     bool is_alias() const { return ptr != &mat; }
 
 public:
     using value_type = BASE;
+    using iterator = BASE *;
+    using const_iterator = const iterator;
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    explicit igMat<BASE>(igCaptureType<TYPE(igraph_matrix)> m) : mat(m.obj) { }
-    explicit igMat<BASE>(igAliasType<TYPE(igraph_matrix)> m) : ptr(&m.obj) { }
+    explicit igMat<BASE>(igCaptureType<igraph_type> m) : mat(m.obj) { }
+    explicit igMat<BASE>(igAliasType<igraph_type> m) : ptr(&m.obj) { }
 
     explicit igMat<BASE>(size_type n = 0, size_type m = 0) {
         igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
@@ -28,7 +32,7 @@ public:
         igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, other.ptr));
     }
 
-    igMat<BASE>(const TYPE(igraph_matrix) *v) {
+    igMat<BASE>(const igraph_type *v) {
         igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, v));
     }
 
@@ -60,16 +64,16 @@ public:
         }
     }
 
-    operator TYPE(igraph_matrix) *() { return ptr; }
-    operator const TYPE(igraph_matrix) *() const { return ptr; }
+    operator igraph_type *() { return ptr; }
+    operator const igraph_type *() const { return ptr; }
 
-    BASE *begin() { return ptr->data.stor_begin; }
-    BASE *end() { return ptr->data.end; }
+    iterator begin() { return ptr->data.stor_begin; }
+    iterator end() { return ptr->data.end; }
 
-    const BASE *begin() const { return ptr->data.stor_begin; }
-    const BASE *end() const { return ptr->data.end; }
+    const_iterator begin() const { return ptr->data.stor_begin; }
+    const_iterator end() const { return ptr->data.end; }
 
-    BASE *data() { return begin(); }
+    value_type *data() { return begin(); }
 
     size_type size() const { return ptr->data.end - ptr->data.stor_begin; }
     size_type capacity() const { return ptr->data.stor_end - ptr->data.stor_begin; }
@@ -77,11 +81,11 @@ public:
     size_type nrow() const { return ptr->nrow; }
     size_type ncol() const { return ptr->ncol; }
 
-    BASE & operator [] (size_type i) { return begin()[i]; }
-    const BASE & operator [] (size_type i) const { return begin()[i]; }
+    value_type & operator [] (size_type i) { return begin()[i]; }
+    const value_type & operator [] (size_type i) const { return begin()[i]; }
 
-    BASE & operator () (size_type i, size_type j) { return MATRIX(*ptr, i, j); }
-    const BASE & operator () (size_type i, size_type j) const { return MATRIX(*ptr, i, j); }
+    value_type & operator () (size_type i, size_type j) { return MATRIX(*ptr, i, j); }
+    const value_type & operator () (size_type i, size_type j) const { return MATRIX(*ptr, i, j); }
 
     void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
