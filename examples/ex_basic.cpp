@@ -1,5 +1,5 @@
 
-#include "igraph.hpp"
+#include <igraph.hpp>
 #include "ex_vector_print.hpp"
 
 #include <algorithm>

@@ -1,5 +1,5 @@
 
-#include "igraph.hpp"
+#include <igraph.hpp>
 #include <iostream>
 
 using namespace ig;

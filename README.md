@@ -15,7 +15,7 @@ This is an experimental header-only library that provides RAII wrapper for igrap
 
 ## Usage
 
-Example programs, with explanatory comments, are in files whose name starts with  `ex_`. The examples can be built using CMake:
+Example programs, with explanatory comments, are found in the `examples` directory. They can be built using CMake:
 
 ```
 mkdir build && cd build
