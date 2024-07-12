@@ -183,7 +183,7 @@ public:
         return res;
     }
 
-    bool has_multi() const {
+    bool has_multiple() const {
         igraph_bool_t res;
         igCheck(igraph_has_multiple(ptr, &res));
         return res;
@@ -216,12 +216,6 @@ public:
     bool is_acyclic() const {
         igraph_bool_t res;
         igCheck(igraph_is_acyclic(ptr, &res));
-        return res;
-    }
-
-    igraph_real_t mean_degree(bool loops = true) const {
-        igraph_real_t res;
-        igCheck(igraph_mean_degree(ptr, &res, loops));
         return res;
     }
 };
