@@ -62,16 +62,36 @@ public:
     iterator begin();
     iterator end();
 
+    // List takes ownership of t
+    void set(igraph_integer_t pos, value_type &t) {
+        FUNCTION(set)(ptr, pos, t);
+        t.ptr = &ptr->stor_begin[pos]; // set as alias
+    }
+
+    // List takes ownership of t
+    void set(igraph_integer_t pos, value_type &&t) {
+        FUNCTION(set)(ptr, pos, t);
+        t.ptr = nullptr;
+    }
+
+    // List takes ownership of t
+    void set(igraph_integer_t pos, value_type::igraph_type *t) {
+        FUNCTION(set)(ptr, pos, t);
+    }
+
+    // List takes ownership of t
     void push_back(value_type &t) {
         igCheck(FUNCTION(push_back)(ptr, t));
         t.ptr = FUNCTION(tail_ptr)(ptr); // set as alias
     }
 
+    // List takes ownership of t
     void push_back(value_type &&t) {
         igCheck(FUNCTION(push_back)(ptr, t));
         t.ptr = nullptr;
     }
 
+    // List takes ownership of t
     void push_back(value_type::igraph_type *t) {
         igCheck(FUNCTION(push_back)(ptr, t));
     }
