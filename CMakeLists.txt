@@ -31,3 +31,6 @@ target_link_libraries(ex_error PUBLIC igraph::igraph)
 
 add_executable(ex_views ex_views.cpp)
 target_link_libraries(ex_views PUBLIC igraph::igraph)
+
+add_executable(ex_igraph_tutorial ex_igraph_tutorial.cpp)
+target_link_libraries(ex_igraph_tutorial PUBLIC igraph::igraph)
