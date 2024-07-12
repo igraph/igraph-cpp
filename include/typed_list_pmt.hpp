@@ -117,6 +117,12 @@ public:
     friend void swap(LIST_TYPE &t1, LIST_TYPE &t2) noexcept {
         FUNCTION(swap)(t1.ptr, t2.ptr);
     }
+
+#ifdef GRAPH_LIST
+    void set_directed(bool directed) {
+        igraph_graph_list_set_directed(ptr, directed);
+    }
+#endif
 };
 
 class LIST_TYPE_TEMPL::iterator {
