@@ -1,0 +1,37 @@
+name: Build and test
+
+on: [push, pull_request]
+
+env:
+  ASAN_OPTIONS: detect_stack_use_after_return=1:color=always
+  UBSAN_OPTIONS: print_stacktrace=1:color=always
+  OMP_NUM_THREADS: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Install dependencies
+        run: sudo apt-get install libigraph-dev
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create build environment
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configuration
+        working-directory: ${{github.workspace}}/build
+        run: |
+          cmake .. -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer"
+
+      - name: Build
+        working-directory: ${{github.workspace}}/build
+        run: cmake --build . --parallel
+
+      - name: Test
+        run: ctest -j $(nproc) --output-on-failure --timeout 180
+        working-directory: ${{github.workspace}}/build
