@@ -1,0 +1,15 @@
+
+function(make_test NAME)
+    add_executable("${NAME}" "${NAME}.cpp")
+    target_link_libraries("${NAME}" PUBLIC igraph-cpp)
+    add_test(NAME "${NAME}" COMMAND "${NAME}")
+endfunction()
+
+make_test(ex_basic)
+make_test(ex_matrix)
+make_test(ex_graph)
+make_test(ex_list)
+make_test(ex_decompose)
+make_test(ex_error)
+make_test(ex_views)
+make_test(ex_igraph_tutorial)
