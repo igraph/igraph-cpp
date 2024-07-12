@@ -4,6 +4,10 @@
 
 #include <igraph.h>
 
+#if !(IGRAPH_VERSION_MAJOR == 0 && IGRAPH_VERSION_MINOR == 10)
+#error "This version of igraph-cpp requires igraph 0.10."
+#endif
+
 #include <cassert>
 #include <iterator>
 #include <stdexcept>
