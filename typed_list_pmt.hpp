@@ -90,12 +90,15 @@ public:
     void swap(LIST_TYPE &other) { igCheck(FUNCTION(swap)(ptr, other.ptr)); }
 };
 
-class LIST_TYPE::iterator : public std::iterator<std::random_access_iterator_tag,
-                                                        value_type,
-                                                        difference_type,
-                                                        value_type *,
-                                                        value_type>
-{
+class LIST_TYPE::iterator {
+public:
+    using value_type = value_type;
+    using difference_type = difference_type;
+    using pointer = value_type *;
+    using reference = value_type;
+    using iterator_category = std::random_access_iterator_tag;
+
+private:
     value_type::igraph_type *p;
 
     friend class LIST_TYPE;
