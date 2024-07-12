@@ -129,8 +129,22 @@ public:
     }
 
     igGraph & operator = (const igGraph &) = delete;
-
     igGraph & operator = (igGraph &&) = delete;
+
+    igGraph & operator = (igCaptureType<igraph_t> g) {
+        if (! is_alias())
+            igraph_destroy(ptr);
+        graph = g.obj;
+        ptr = &graph;
+        return *this;
+    }
+
+    igGraph & operator = (igAliasType<igraph_t> g) {
+        if (! is_alias())
+            igraph_destroy(ptr);
+        ptr = &g.obj;
+        return *this;
+    }
 
     ~igGraph() {
         if (! is_alias())
