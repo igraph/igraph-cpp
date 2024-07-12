@@ -19,11 +19,12 @@ namespace ig {
 // Error handling
 
 struct igException : std::runtime_error {
-    igraph_error_t errno;
+    igraph_error_t error;
 
-    explicit igException(igraph_error_t errno) :
-            std::runtime_error(igraph_strerror(errno)),
-            errno(errno) {}
+    explicit igException(igraph_error_t error_) :
+            std::runtime_error(igraph_strerror(error_)),
+           error(error_)
+            { }
 };
 
 inline void igCheck(igraph_error_t error) {
@@ -85,7 +86,6 @@ using igIntVecList = igVecList<igraph_integer_t>;
 #undef BASE_BOOL
 using igBoolVec = igVec<igraph_bool_t>;
 using igBoolMat = igMat<igraph_bool_t>;
-
 
 class igGraphList;
 

@@ -26,14 +26,14 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    explicit igVec<BASE>(igCaptureType<igraph_type> v) : vec(v.obj) { }
-    explicit igVec<BASE>(igAliasType<igraph_type> v) : ptr(&v.obj) { }
+    explicit igVec(igCaptureType<igraph_type> v) : vec(v.obj) { }
+    explicit igVec(igAliasType<igraph_type> v) : ptr(&v.obj) { }
 
-    explicit igVec<BASE>(size_type n = 0) {
+    explicit igVec(size_type n = 0) {
         igCheck(FUNCTION(igraph_vector, init)(ptr, n));
     }
 
-    igVec<BASE>(igVec<BASE> &&other) {
+    igVec(igVec &&other) {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -42,24 +42,24 @@ public:
         other.ptr = nullptr;
     }
 
-    igVec<BASE>(const igVec<BASE> &other) {
+    igVec(const igVec &other) {
         igCheck(FUNCTION(igraph_vector, init_copy)(ptr, other.ptr));
     }
 
-    igVec<BASE>(const igraph_type *v) {
+    igVec(const igraph_type *v) {
         igCheck(FUNCTION(igraph_vector, init_copy)(ptr, v));
     }
 
-    igVec<BASE>(std::initializer_list<BASE> list) {
+    igVec(std::initializer_list<BASE> list) {
         igCheck(FUNCTION(igraph_vector, init_array)(ptr, list.begin(), list.size()));
     }
 
-    igVec<BASE> & operator = (const igVec<BASE> &other) {
+    igVec & operator = (const igVec &other) {
         igCheck(FUNCTION(igraph_vector, update)(ptr, other.ptr));
         return *this;
     }
 
-    igVec<BASE> & operator = (igVec<BASE> &&other) {
+    igVec & operator = (igVec &&other) {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
         if (other.is_alias()) {
@@ -71,7 +71,7 @@ public:
         return *this;
     }
 
-    ~igVec<BASE>() {
+    ~igVec() {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
     }
@@ -114,7 +114,7 @@ public:
         return const_cast<iterator>(first);
     }
 
-    friend void swap(igVec<BASE> &v1, igVec<BASE> &v2) {
+    friend void swap(igVec &v1, igVec &v2) {
         igCheck(FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr));
     }
 };

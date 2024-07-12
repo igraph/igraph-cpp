@@ -4,7 +4,7 @@
 #ifndef GRAPH_LIST
 template<>
 #endif
-class LIST_TYPE {
+class LIST_TYPE_TEMPL {
     using igraph_type = TYPE;
 
     igraph_type list;
@@ -119,10 +119,10 @@ public:
     }
 };
 
-class LIST_TYPE::iterator {
+class LIST_TYPE_TEMPL::iterator {
 public:
-    using value_type = value_type;
-    using difference_type = difference_type;
+    using value_type = LIST_TYPE::value_type;
+    using difference_type = LIST_TYPE::difference_type;
     using pointer = value_type *;
     using reference = value_type;
     using iterator_category = std::random_access_iterator_tag;
@@ -131,7 +131,7 @@ private:
     value_type::igraph_type *p;
 
     friend class LIST_TYPE;
-    iterator(value_type::igraph_type *p) : p(p) { }
+    iterator(value_type::igraph_type *p_) : p(p_) { }
 
 public:
 
@@ -183,7 +183,7 @@ public:
     }
 };
 
-LIST_TYPE::iterator LIST_TYPE::begin() { return ptr->stor_begin; }
-LIST_TYPE::iterator LIST_TYPE::end() { return ptr->end; }
+LIST_TYPE_TEMPL::iterator LIST_TYPE_TEMPL::begin() { return ptr->stor_begin; }
+LIST_TYPE_TEMPL::iterator LIST_TYPE_TEMPL::end() { return ptr->end; }
 
 #include <igraph_pmt_off.h>

@@ -18,14 +18,14 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    explicit igMat<BASE>(igCaptureType<igraph_type> m) : mat(m.obj) { }
-    explicit igMat<BASE>(igAliasType<igraph_type> m) : ptr(&m.obj) { }
+    explicit igMat(igCaptureType<igraph_type> m) : mat(m.obj) { }
+    explicit igMat(igAliasType<igraph_type> m) : ptr(&m.obj) { }
 
-    explicit igMat<BASE>(size_type n = 0, size_type m = 0) {
+    explicit igMat(size_type n = 0, size_type m = 0) {
         igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
     }
 
-    igMat<BASE>(igMat<BASE> &&other) {
+    igMat(igMat &&other) {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -34,20 +34,20 @@ public:
         other.ptr = nullptr;
     }
 
-    igMat<BASE>(const igMat<BASE> &other) {
+    igMat(const igMat &other) {
         igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, other.ptr));
     }
 
-    igMat<BASE>(const igraph_type *v) {
+    igMat(const igraph_type *v) {
         igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, v));
     }
 
-    igMat<BASE> & operator = (const igMat<BASE> &other) {
+    igMat & operator = (const igMat &other) {
         igCheck(FUNCTION(igraph_matrix, update)(ptr, other.ptr));
         return *this;
     }
 
-    igMat<BASE> & operator = (igMat<BASE> &&other) {
+    igMat & operator = (igMat &&other) {
         if (! is_alias())
             FUNCTION(igraph_matrix, destroy)(ptr);
         if (other.is_alias()) {
@@ -59,14 +59,14 @@ public:
         return *this;
     }
 
-    igMat<BASE>(std::initializer_list<std::initializer_list<BASE>> values) {
+    igMat(std::initializer_list<std::initializer_list<BASE>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;
         igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
 
         size_type i = 0;
         for (const auto &row : values) {
-            assert(row.size() == m);
+            assert(row.size() == (size_t) m);
             size_type j = 0;
             for (const auto &el : row) {
                 MATRIX(*ptr, i, j) = el;
@@ -76,7 +76,7 @@ public:
         }
     }
 
-    ~igMat<BASE>() {
+    ~igMat() {
         if (!is_alias()) {
             FUNCTION(igraph_matrix, destroy)(ptr);
         }
@@ -108,7 +108,7 @@ public:
     void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
-    friend void swap(igMat<BASE> &m1, igMat<BASE> &m2) {
+    friend void swap(igMat &m1, igMat &m2) {
         igCheck(FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr));
     }
 };
