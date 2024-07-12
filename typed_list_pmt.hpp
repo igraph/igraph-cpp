@@ -14,6 +14,7 @@ class LIST_TYPE {
 
 public:
     using value_type = ELEM_TYPE;
+    using reference = value_type;
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
@@ -52,8 +53,8 @@ public:
     size_type size() const { return ptr->end - ptr->stor_begin; }
     size_type capacity() const { return ptr->stor_end - ptr->stor_begin; }
 
-    value_type operator [] (size_type i) { return value_type(igAlias(ptr->stor_begin[i])); }
-    const value_type operator [] (size_type i) const { return value_type(igAlias(ptr->stor_begin[i])); }
+    reference operator [] (size_type i) { return value_type(igAlias(ptr->stor_begin[i])); }
+    const reference operator [] (size_type i) const { return value_type(igAlias(ptr->stor_begin[i])); }
 
     void clear() { FUNCTION(clear)(ptr); }
     void resize(size_type size) { igCheck(FUNCTION(resize)(ptr, size)); }
@@ -61,6 +62,9 @@ public:
 
     iterator begin();
     iterator end();
+
+    reference back() { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
+    const reference back() const { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
 
     // List takes ownership of t
     void set(igraph_integer_t pos, value_type &t) {
@@ -100,7 +104,7 @@ public:
         igCheck(FUNCTION(push_back_copy)(ptr, t));
     }
 
-    value_type push_back_new() {
+    reference push_back_new() {
         value_type::igraph_type *t;
         igCheck(FUNCTION(push_back_new)(ptr, &t));
         return value_type(igAlias(*t));
