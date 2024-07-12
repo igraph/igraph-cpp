@@ -28,3 +28,6 @@ target_link_libraries(ex_decompose PUBLIC igraph::igraph)
 
 add_executable(ex_error ex_error.cpp)
 target_link_libraries(ex_error PUBLIC igraph::igraph)
+
+add_executable(ex_views ex_views.cpp)
+target_link_libraries(ex_views PUBLIC igraph::igraph)
