@@ -7,6 +7,7 @@
 #include <cassert>
 #include <iterator>
 #include <stdexcept>
+#include <type_traits>
 #include <utility>
 
 namespace ig {
@@ -30,12 +31,13 @@ inline void igCheck(igraph_error_t error) {
 
 template<typename T>
 struct igCaptureType {
-    const T &obj;
-    explicit igCaptureType(const T &obj) : obj(obj) { }
+    T &obj;
+    explicit igCaptureType(T &obj) : obj(obj) { }
 };
 
 template<typename T>
-inline igCaptureType<T> igCapture(const T &obj) { return igCaptureType<T>(obj); }
+inline igCaptureType<typename std::remove_reference<T>::type>
+igCapture(T &&obj) { return igCaptureType<typename std::remove_reference<T>::type>(obj); }
 
 template<typename T>
 struct igAliasType {
