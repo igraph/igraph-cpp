@@ -136,6 +136,12 @@ public:
     operator igraph_t *() { return ptr; }
     operator const igraph_t *() const { return ptr; }
 
+    friend void swap(igGraph &g1, igGraph &g2) {
+        igraph_t tmp = *g1.ptr;
+        *g1.ptr = *g2.ptr;
+        *g2.ptr = tmp;
+    }
+
     bool is_directed() const { return igraph_is_directed(ptr); }
     igraph_integer_t vcount() const { return igraph_vcount(ptr); }
     igraph_integer_t ecount() const { return igraph_ecount(ptr); }

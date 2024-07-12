@@ -90,7 +90,9 @@ public:
         return value_type(igCapture(FUNCTION(pop_back)(ptr)));
     }
 
-    void swap(LIST_TYPE &other) { igCheck(FUNCTION(swap)(ptr, other.ptr)); }
+    friend void swap(LIST_TYPE &t1, LIST_TYPE &t2) {
+        igCheck(FUNCTION(swap)(t1.ptr, t2.ptr));
+    }
 };
 
 class LIST_TYPE::iterator {

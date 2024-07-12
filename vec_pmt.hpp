@@ -114,7 +114,9 @@ public:
         return const_cast<iterator>(first);
     }
 
-    void swap(igVec<BASE> &other) { igCheck(FUNCTION(igraph_vector, swap)(ptr, other.ptr)); }
+    friend void swap(igVec<BASE> &v1, igVec<BASE> &v2) {
+        igCheck(FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr));
+    }
 };
 
 #include <igraph_pmt_off.h>

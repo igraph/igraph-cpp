@@ -108,7 +108,9 @@ public:
     void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
-    void swap(igMat<BASE> &other) { igCheck(FUNCTION(igraph_matrix, swap)(ptr, other.ptr)); }
+    friend void swap(igMat<BASE> &m1, igMat<BASE> &m2) {
+        igCheck(FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr));
+    }
 };
 
 #include <igraph_pmt_off.h>
