@@ -12,8 +12,18 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Install dependencies
-        run: sudo apt-get install libigraph-dev
+      - name: Install igraph dependencies
+        run: sudo apt-get install libglpk-dev libarpack2-dev
+
+      - name: Build igraph
+        run: |
+          wget https://github.com/igraph/igraph/releases/download/0.10.13/igraph-0.10.13.tar.gz
+          tar xfz igraph-0.10.13.tar.gz
+          cd igraph-0.10.13
+          mkdir build && cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/local
+          cmake --build . --parallel
+          cmake --install .
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +36,7 @@ jobs:
       - name: Configuration
         working-directory: ${{github.workspace}}/build
         run: |
-          cmake .. -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer"
+          cmake .. -DCMAKE_PREFIX_PATH=$HOME/local -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer"
 
       - name: Build
         working-directory: ${{github.workspace}}/build
