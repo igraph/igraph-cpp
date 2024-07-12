@@ -3,9 +3,12 @@ name: Build and test
 on: [push, pull_request]
 
 env:
-  ASAN_OPTIONS: detect_stack_use_after_return=1:color=always
+  CMAKE_COLOR_DIAGNOSTICS: ON
+  ASAN_OPTIONS: detect_stack_use_after_return=1:detect_leaks=1:color=always
   UBSAN_OPTIONS: print_stacktrace=1:color=always
-  OMP_NUM_THREADS: 1
+  CCACHE_DIR: ${{ github.workspace }}/ccache
+  CCACHE_MAXSIZE: 128M
+  IGRAPH_VERSION: 0.10.13
 
 jobs:
   build:
@@ -13,19 +16,29 @@ jobs:
 
     steps:
       - name: Install igraph dependencies
-        run: sudo apt-get install libglpk-dev libarpack2-dev
+        run: sudo apt-get install ccache libglpk-dev libarpack2-dev
 
-      - name: Build igraph
+      - name: Ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ github.ref_name }}-
+            ccache-
+
+      - name: Download and build igraph
         run: |
-          wget https://github.com/igraph/igraph/releases/download/0.10.13/igraph-0.10.13.tar.gz
-          tar xfz igraph-0.10.13.tar.gz
-          cd igraph-0.10.13
+          cd ${{ github.workspace }}
+          wget https://github.com/igraph/igraph/releases/download/$IGRAPH_VERSION/igraph-$IGRAPH_VERSION.tar.gz
+          tar xfz igraph-$IGRAPH_VERSION.tar.gz
+          cd igraph-$IGRAPH_VERSION
           mkdir build && cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/local
+          cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/local -DBUILD_SHARED_LIBS=ON -DUSE_SANITIZER=Address -DCMAKE_BUILD_TYPE=Debug
           cmake --build . --parallel
           cmake --install .
 
-      - name: Checkout
+      - name: Checkout igraph-cpp
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -33,7 +46,7 @@ jobs:
       - name: Create build environment
         run: cmake -E make_directory ${{github.workspace}}/build
 
-      - name: Configuration
+      - name: Configure
         working-directory: ${{github.workspace}}/build
         run: |
           cmake .. -DCMAKE_PREFIX_PATH=$HOME/local -DCMAKE_CXX_FLAGS="-fsanitize=address -fsanitize=undefined -g -fno-omit-frame-pointer"
