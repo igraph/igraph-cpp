@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/igraph-cpp-targets.cmake")
+
+include(CMakeFindDependencyMacro)
+find_dependency(igraph 0.10.0 CONFIG REQUIRED)
+
+check_required_components(igraph-cpp)
