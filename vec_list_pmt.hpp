@@ -1,3 +1,4 @@
+
 #define VECTOR_LIST
 #define LIST_TYPE igVecList<BASE>
 #define ELEM_TYPE igVec<BASE>

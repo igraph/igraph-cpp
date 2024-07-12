@@ -1,3 +1,4 @@
+
 #define GRAPH_LIST
 #define LIST_TYPE igGraphList
 #define ELEM_TYPE igGraph

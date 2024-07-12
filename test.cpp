@@ -43,12 +43,13 @@ int main() {
     // initial size is zero
     std::cout << v.size() << std::endl;
 
-    // igVec<XXX> is convertible to the corresponding igraph_vector_XXX_t * pointer.
+    // igVec<XXX> is implicitly convertible to the corresponding igraph_vector_XXX_t * pointer.
     igCheck(igraph_vector_resize(v, 10));
     std::cout << v.size() << std::endl;
 
     // igVec<> has STL-compatible convenience member functions for common operations.
     v.resize(5);
+    igraph_vector_null(v);
     std::cout << v.size() << std::endl;
 
     // The indexing operator is available.
@@ -72,12 +73,13 @@ int main() {
     std::cout << v << std::endl;
 
     // Create an integer and a boolean vector using a list initializer.
-    {
-        igIntVec iv = {4, 3, 0};
-        igBoolVec bv = {true, false, true, false};
-        std::cout << iv << std::endl;
-        std::cout << bv << std::endl;
-    }
+    igIntVec iv = {4, 3, 0, 9, -3};
+    std::cout << "Original: " << iv << std::endl;
+    std::stable_sort(iv.begin(), iv.end());
+    std::cout << "Sorted: " << iv << std::endl;
+
+    igBoolVec bv = {true, false, true, false};
+    std::cout << "Boolean vector: " << bv << std::endl;
 
     ///// Examples with matrices /////
     std::cout << std::endl;
@@ -138,6 +140,44 @@ int main() {
         std::cout << "Closeness: " << closeness << std::endl;
     }
 
+    igraph_rng_seed(igraph_rng_default(), 42);
+    {
+        igraph_t ig;
+        igraph_erdos_renyi_game_gnp(&ig, 10, 0.5, IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
+        igGraph g(igCapture(ig));
+
+        igVecList<igraph_integer_t> list;
+        igraph_maximal_cliques(g, list, -1, -1);
+
+        std::cout << "\nMaximal cliques:" << std::endl;
+        for (const auto &vec : list)
+            std::cout << '(' << vec << ')' << std::endl;
+
+        // Remove the last element
+        list.pop_back();
+
+        // Add a new empty element
+        list.push_back_new();
+
+        // Add another element
+        list.push_back(igIntVec{1,2,3});
+
+        // Print again
+        std::cout << "\nModified vector list:" << std::endl;
+        for (const auto &vec : list)
+            std::cout << '(' << vec << ')' << std::endl;
+    }
+
+    {
+        igGraph g(igIntVec{0,1, 1,2, 3,4, 5,6});
+        igGraphList list;
+        igraph_decompose(g, list, IGRAPH_WEAK, -1, -1);
+
+        std::cout << "\nGraph components:\n" << std::endl;
+        for (const auto &el : list)
+            std::cout << el << std::endl;
+    }
+
     // igraph's default error handler aborts the program on error. We can turn
     // off this behaviour, and convert error codes to exceptions using igCheck().
     igraph_set_error_handler(igraph_error_handler_printignore);
@@ -157,47 +197,6 @@ int main() {
         igCheck(igraph_betweenness(g, betweenness, igraph_vss_all(), IGRAPH_DIRECTED, weights));
     } catch (const std::exception &ex) {
         std::cerr << "Caught exception: " << ex.what() << std::endl;
-    }
-
-    igraph_rng_seed(igraph_rng_default(), 42);
-    {
-        igraph_t ig;
-        igraph_erdos_renyi_game_gnp(&ig, 10, 0.5, IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
-        igGraph g(igCapture(ig));
-
-        igVecList<igraph_integer_t> list;
-        igraph_maximal_cliques(g, list, -1, -1);
-
-        std::cout << "\nMaximal cliques:" << std::endl;
-        for (const auto &vec : list) {
-            std::cout << '(' << vec << ')' << std::endl;
-        }
-
-        // Remove the last element
-        list.pop_back();
-
-        // Add a new empty element
-        list.push_back_new();
-
-        // Add another element
-        list.push_back(igIntVec{1,2,3});
-
-        // Print again
-        std::cout << "\nModified vector list:" << std::endl;
-        for (const auto &vec : list) {
-            std::cout << '(' << vec << ')' << std::endl;
-        }
-    }
-
-    {
-        igGraph g(igIntVec{0,1, 1,2, 3,4, 5,6});
-        igGraphList list;
-        igraph_decompose(g, list, IGRAPH_WEAK, -1, -1);
-
-        std::cout << "\nGraph components:\n" << std::endl;
-        for (const auto &el : list) {
-            std::cout << el << std::endl;
-        }
     }
 
     return 0;
