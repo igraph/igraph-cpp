@@ -33,7 +33,7 @@ public:
         igCheck(FUNCTION(igraph_vector, init)(ptr, n));
     }
 
-    igVec(igVec &&other) {
+    igVec(igVec &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -114,8 +114,8 @@ public:
         return const_cast<iterator>(first);
     }
 
-    friend void swap(igVec &v1, igVec &v2) {
-        igCheck(FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr));
+    friend void swap(igVec &v1, igVec &v2) noexcept {
+        FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
     }
 };
 

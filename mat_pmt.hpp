@@ -25,7 +25,7 @@ public:
         igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
     }
 
-    igMat(igMat &&other) {
+    igMat(igMat &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -108,8 +108,8 @@ public:
     void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
-    friend void swap(igMat &m1, igMat &m2) {
-        igCheck(FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr));
+    friend void swap(igMat &m1, igMat &m2) noexcept {
+        FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
     }
 };
 

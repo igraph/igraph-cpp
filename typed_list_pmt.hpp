@@ -27,7 +27,7 @@ public:
         igCheck(FUNCTION(init)(ptr, n));
     }
 
-    LIST_TYPE(LIST_TYPE &&other) {
+    LIST_TYPE(LIST_TYPE &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -114,8 +114,8 @@ public:
         return value_type(igCapture(FUNCTION(pop_back)(ptr)));
     }
 
-    friend void swap(LIST_TYPE &t1, LIST_TYPE &t2) {
-        igCheck(FUNCTION(swap)(t1.ptr, t2.ptr));
+    friend void swap(LIST_TYPE &t1, LIST_TYPE &t2) noexcept {
+        FUNCTION(swap)(t1.ptr, t2.ptr);
     }
 };
 

@@ -23,8 +23,7 @@ struct igException : std::runtime_error {
 
     explicit igException(igraph_error_t error_) :
             std::runtime_error(igraph_strerror(error_)),
-           error(error_)
-            { }
+            error(error_) { }
 };
 
 inline void igCheck(igraph_error_t error) {
@@ -119,7 +118,7 @@ public:
         igCheck(igraph_copy(ptr, g.ptr));
     }
 
-    igGraph(igGraph &&other) {
+    igGraph(igGraph &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -154,7 +153,7 @@ public:
     operator igraph_t *() { return ptr; }
     operator const igraph_t *() const { return ptr; }
 
-    friend void swap(igGraph &g1, igGraph &g2) {
+    friend void swap(igGraph &g1, igGraph &g2) noexcept {
         igraph_t tmp = *g1.ptr;
         *g1.ptr = *g2.ptr;
         *g2.ptr = tmp;
