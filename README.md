@@ -1,6 +1,6 @@
 # igraph-cpp
 
-This is an experimental RAII wrapper for igraph's data structures. This project is in constant flux and not ready for general use!!
+This is an experimental header-only library that provides RAII wrapper for igraph's data structures. This project is in constant flux and not ready for general use!!
 
 ## Goals
 
@@ -12,3 +12,13 @@ This is an experimental RAII wrapper for igraph's data structures. This project 
 ## Non-goals
 
  - Provide a full C++ wrapper to igraph's C API.
+
+## Usage
+
+Example programs, with explanatory comments, are in files whose name starts with  `ex_`. The examples can be built using CMake:
+
+```
+mkdir build && cd build
+cmake ..
+cmake --build .
+```
