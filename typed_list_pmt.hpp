@@ -1,7 +1,10 @@
 
 #include <igraph_pmt.h>
 
-template<> class LIST_TYPE {
+#ifndef GRAPH_LIST
+template<>
+#endif
+class LIST_TYPE {
     using igraph_type = TYPE;
 
     igraph_type list;

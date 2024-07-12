@@ -83,13 +83,17 @@ using igBoolVec = igVec<igraph_bool_t>;
 using igBoolMat = igMat<igraph_bool_t>;
 
 
+class igGraphList;
+
 class igGraph {
+    using igraph_type = igraph_t;
+
     igraph_t graph;
     igraph_t *ptr = &graph;
 
-    bool is_alias() const {
-        return ptr != &graph;
-    }
+    bool is_alias() const { return ptr != &graph; }
+
+    friend class igGraphList;
 
 public:
     explicit igGraph(igCaptureType<igraph_t> g) : graph(g.obj) { }
@@ -198,6 +202,10 @@ public:
         return res;
     }
 };
+
+#define BASE_GRAPH
+#include "graph_list_pmt.hpp"
+#undef BASE_GRAPH
 
 } // namespace ig
 
