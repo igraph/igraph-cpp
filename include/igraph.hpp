@@ -218,6 +218,10 @@ public:
         igCheck(igraph_is_acyclic(ptr, &res));
         return res;
     }
+
+    void invalidate_cache() const {
+        igraph_invalidate_cache(ptr);
+    }
 };
 
 #define BASE_GRAPH
