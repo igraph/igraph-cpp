@@ -171,6 +171,14 @@ public:
         *g2.ptr = tmp;
     }
 
+    // Necessary to allow some STL algorithms to work on igGraphList,
+    // whose iterator dereferences to an aliasing igGraph.
+    friend void swap(igGraph &&g1, igGraph &&g2) noexcept {
+        igraph_t tmp = *g1.ptr;
+        *g1.ptr = *g2.ptr;
+        *g2.ptr = tmp;
+    }
+
     bool is_directed() const { return igraph_is_directed(ptr); }
     igraph_integer_t vcount() const { return igraph_vcount(ptr); }
     igraph_integer_t ecount() const { return igraph_ecount(ptr); }
@@ -235,7 +243,8 @@ public:
         igraph_invalidate_cache(ptr);
     }
 
-    // Note that igraph_is_same_graph() ignores edge ordering and attributes.
+    // Note that the comparison is between labelled graphs, i.e. it does not test
+    // for isomorphism. It also ignores attributes.
     friend bool operator == (const igGraph &lhs, const igGraph &rhs) {
         igraph_bool_t res;
         igCheck(igraph_is_same_graph(lhs, rhs, &res));

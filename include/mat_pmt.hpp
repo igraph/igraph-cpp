@@ -117,7 +117,14 @@ public:
     void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
+
     friend void swap(igMat &m1, igMat &m2) noexcept {
+        FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
+    }
+
+    // Necessary to allow some STL algorithms to work on igMatList,
+    // whose iterator dereferences to an aliasing igMat.
+    friend void swap(igMat &&m1, igMat &&m2) noexcept {
         FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
     }
 

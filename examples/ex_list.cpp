@@ -2,6 +2,7 @@
 #include <igraph.hpp>
 #include "ex_vector_print.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 
@@ -45,6 +46,9 @@ int main() {
 
     // Add another element.
     list.push_back(igIntVec{1,2,3});
+
+    // Reverse the list.
+    std::reverse(list.begin(), list.end());
 
     // Print the list again.
     std::cout << "\nModified vector list:\n" << list << std::endl;

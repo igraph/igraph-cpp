@@ -127,6 +127,12 @@ public:
         FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
     }
 
+    // Necessary to allow some STL algorithms to work on igVecList,
+    // whose iterator dereferences to an aliasing igVec.
+    friend void swap(igVec &&v1, igVec &&v2) noexcept {
+        FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
+    }
+
     friend bool operator == (const igVec &lhs, const igVec &rhs) {
         if (lhs.ptr == rhs.ptr)
             return true;

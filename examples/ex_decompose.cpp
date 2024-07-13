@@ -2,6 +2,7 @@
 #include <igraph.hpp>
 #include "ex_vector_print.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace ig;
@@ -20,7 +21,7 @@ std::ostream & operator << (std::ostream &out, const igGraph &g) {
 int main() {
 
     // Create a directed graph from its edge list.
-    igGraph g(igIntVec{0,1, 1,2, 3,4, 5,6}, 8, IGRAPH_DIRECTED);
+    igGraph g(igIntVec{0,1, 1,2, 3,4, 5,6}, 9, IGRAPH_DIRECTED);
 
     // igGraphList is a wrapper for igraph_graph_list_t.
     igGraphList list;
@@ -32,6 +33,17 @@ int main() {
     std::cout << "\nGraph components:\n" << std::endl;
     for (const auto &el : list)
         std::cout << el << std::endl;
+
+    // Reverse sort the graph list.
+    std::sort(list.begin(), list.end(),
+              [](const igGraph &a, const igGraph &b) { return a.vcount() < b.vcount(); });
+
+    // The two smallest components are the same graph because they are both singletons.
+    // Note that the == operator compares labelled graphs without attributes,
+    // and does not perform isomorphism checks.
+    std::cout << "The two smallest components are "
+              << (list[0] == list[1] ? "" : "not")
+              << "the same labelled graph.";
 
     return 0;
 }
