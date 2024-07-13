@@ -18,7 +18,9 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    class iterator;
+    template<typename ValueType, typename Pointer, typename Reference> class base_iterator;
+    using iterator = base_iterator<value_type, value_type *, value_type>;
+    using const_iterator = base_iterator<const value_type, const value_type *, const value_type>;
 
     explicit LIST_TYPE(igCaptureType<igraph_type> tl) : list(tl.obj) { }
     explicit LIST_TYPE(igAliasType<igraph_type> tl) : ptr(&tl.obj) { }
@@ -62,6 +64,9 @@ public:
 
     iterator begin();
     iterator end();
+
+    const_iterator begin() const;
+    const_iterator end() const;
 
     reference back() { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
     const reference back() const { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
@@ -125,71 +130,75 @@ public:
 #endif
 };
 
-class LIST_TYPE_TEMPL::iterator {
+template<typename ValueType, typename Pointer, typename Reference>
+class LIST_TYPE_TEMPL::base_iterator {
 public:
-    using value_type = LIST_TYPE::value_type;
-    using difference_type = LIST_TYPE::difference_type;
-    using pointer = value_type *;
-    using reference = value_type;
+    using value_type = ValueType;
+    using difference_type = igraph_integer_t;
+    using pointer = Pointer;
+    using reference = Reference;
     using iterator_category = std::random_access_iterator_tag;
 
 private:
-    value_type::igraph_type *p;
+    typename value_type::igraph_type *p;
 
     friend class LIST_TYPE;
-    iterator(value_type::igraph_type *p_) : p(p_) { }
+    base_iterator(typename value_type::igraph_type *p_) : p(p_) { }
 
 public:
 
     reference operator * () const { return value_type(igAlias(*p)); }
-    reference operator [] (difference_type i) const { return value_type(igAlias(p[i])); }
+    reference operator [] (difference_type i) const { return value_type(igAlias(*p)); }
 
-    iterator & operator ++ () { ++p; return *this; }
-    iterator operator ++ (int) { ++p; return *this; }
-    iterator & operator -- () { --p; return *this; }
-    iterator operator -- (int) { --p; return *this; }
+    base_iterator & operator ++ () { ++p; return *this; }
+    base_iterator operator ++ (int) { ++p; return *this; }
+    base_iterator & operator -- () { --p; return *this; }
+    base_iterator operator -- (int) { --p; return *this; }
 
-    iterator & operator += (difference_type n) { p += n; return *this; }
-    iterator & operator -= (difference_type n) { p -= n; return *this; }
+    base_iterator & operator += (difference_type n) { p += n; return *this; }
+    base_iterator & operator -= (difference_type n) { p -= n; return *this; }
 
-    friend bool operator == (const iterator &lhs, const iterator &rhs) {
+    friend bool operator == (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p == rhs.p;
     }
 
-    friend bool operator != (const iterator &lhs, const iterator &rhs) {
+    friend bool operator != (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p != rhs.p;
     }
 
-    friend bool operator < (const iterator &lhs, const iterator &rhs) {
+    friend bool operator < (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p < rhs.p;
     }
 
-    friend bool operator > (const iterator &lhs, const iterator &rhs) {
+    friend bool operator > (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p > rhs.p;
     }
 
-    friend bool operator <= (const iterator &lhs, const iterator &rhs) {
+    friend bool operator <= (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p <= rhs.p;
     }
 
-    friend bool operator >= (const iterator &lhs, const iterator &rhs) {
+    friend bool operator >= (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p >= rhs.p;
     }
 
-    friend iterator operator + (const iterator &it, difference_type n) {
+    friend base_iterator operator + (const base_iterator &it, difference_type n) {
         return it.p + n;
     }
 
-    friend iterator operator - (const iterator &it, difference_type n) {
+    friend base_iterator operator - (const base_iterator &it, difference_type n) {
         return it.p - n;
     }
 
-    friend difference_type operator - (const iterator &lhs, const iterator &rhs) {
+    friend difference_type operator - (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p - rhs.p;
     }
 };
 
 LIST_TYPE_TEMPL::iterator LIST_TYPE_TEMPL::begin() { return ptr->stor_begin; }
 LIST_TYPE_TEMPL::iterator LIST_TYPE_TEMPL::end() { return ptr->end; }
+
+LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::begin() const { return ptr->stor_begin; }
+LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::end() const { return ptr->end; }
 
 #include <igraph_pmt_off.h>

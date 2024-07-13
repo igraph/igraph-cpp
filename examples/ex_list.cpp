@@ -6,6 +6,14 @@
 
 using namespace ig;
 
+// Support for printing vector lists.
+template<typename T>
+std::ostream & operator << (std::ostream &out, const igVecList<T> &list) {
+    for (const auto &vec : list)
+        std::cout << '(' << vec << ')' << std::endl;
+    return out;
+}
+
 int main() {
 
     // Since we will use stochastic graph generators, we must set the random seed.
@@ -23,9 +31,7 @@ int main() {
     igraph_maximal_cliques(g, list, -1, -1);
 
     // Print the cliques.
-    std::cout << "\nMaximal cliques:" << std::endl;
-    for (const auto &vec : list)
-        std::cout << '(' << vec << ')' << std::endl;
+    std::cout << "\nMaximal cliques:\n" << list << std::endl;
 
     // Remove the last element of the list.
     list.pop_back();
@@ -37,9 +43,7 @@ int main() {
     list.push_back(igIntVec{1,2,3});
 
     // Print the list again.
-    std::cout << "\nModified vector list:" << std::endl;
-    for (const auto &vec : list)
-        std::cout << '(' << vec << ')' << std::endl;
+    std::cout << "\nModified vector list:\n" << list << std::endl;
 
     return 0;
 }
