@@ -128,7 +128,19 @@ public:
     }
 
     igGraph & operator = (const igGraph &) = delete;
-    igGraph & operator = (igGraph &&) = delete;
+
+    igGraph & operator = (igGraph &&other) noexcept {
+        if (! is_alias())
+            igraph_destroy(ptr);
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            graph = other.graph;
+            ptr = &graph;
+        }
+        other.ptr = nullptr;
+        return *this;
+    }
 
     igGraph & operator = (igCaptureType<igraph_t> g) {
         if (! is_alias())

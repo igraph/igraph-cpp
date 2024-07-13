@@ -61,13 +61,14 @@ public:
         return *this;
     }
 
-    igVec & operator = (igVec &&other) {
+    igVec & operator = (igVec &&other) noexcept {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
             vec = other.vec;
+            ptr = &vec;
         }
         other.ptr = nullptr;
         return *this;

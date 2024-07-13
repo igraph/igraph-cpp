@@ -49,13 +49,14 @@ public:
         return *this;
     }
 
-    igMat & operator = (igMat &&other) {
+    igMat & operator = (igMat &&other) noexcept {
         if (! is_alias())
             FUNCTION(igraph_matrix, destroy)(ptr);
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
             mat = other.mat;
+            ptr = &mat;
         }
         other.ptr = nullptr;
         return *this;

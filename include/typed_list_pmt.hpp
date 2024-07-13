@@ -43,7 +43,18 @@ public:
 
     LIST_TYPE & operator = (const LIST_TYPE &other) = delete;
 
-    LIST_TYPE & operator = (LIST_TYPE &&other) = delete;
+    LIST_TYPE & operator = (LIST_TYPE &&other) noexcept {
+        if (! is_alias())
+            FUNCTION(destroy)(ptr);
+        if (other.is_alias()) {
+            ptr = other.ptr;
+        } else {
+            list = other.list;
+            ptr = &list;
+        }
+        other.ptr = nullptr;
+        return *this;
+    }
 
     ~LIST_TYPE() {
         if (! is_alias())
@@ -220,6 +231,12 @@ public:
 
     friend difference_type operator - (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.p - rhs.p;
+    }
+
+    friend void iter_swap(base_iterator it1, base_iterator it2) {
+        typename value_type::igraph_type tmp = *it1.p;
+        *it1.p = *it2.p;
+        *it2.p = tmp;
     }
 };
 
