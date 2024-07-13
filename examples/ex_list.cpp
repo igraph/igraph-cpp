@@ -2,6 +2,7 @@
 #include <igraph.hpp>
 #include "ex_vector_print.hpp"
 
+#include <cassert>
 #include <iostream>
 
 using namespace ig;
@@ -38,6 +39,9 @@ int main() {
 
     // Add a new empty element to the list.
     list.push_back_new();
+
+    // Check that it is actually empty.
+    assert(list.back().empty());
 
     // Add another element.
     list.push_back(igIntVec{1,2,3});

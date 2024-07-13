@@ -222,6 +222,17 @@ public:
     void invalidate_cache() const {
         igraph_invalidate_cache(ptr);
     }
+
+    // Note that igraph_is_same_graph() ignores edge ordering and attributes.
+    friend bool operator == (const igGraph &lhs, const igGraph &rhs) {
+        igraph_bool_t res;
+        igCheck(igraph_is_same_graph(lhs, rhs, &res));
+        return res;
+    }
+
+    friend bool operator != (const igGraph &lhs, const igGraph &rhs) {
+        return ! (lhs == rhs);
+    }
 };
 
 #define BASE_GRAPH

@@ -21,10 +21,12 @@ template<> class igVec<BASE> {
 
 public:
     using value_type = BASE;
+    using reference = BASE &;
+    using const_reference = const BASE &;
     using iterator = BASE *;
     using const_iterator = const BASE *;
-    using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
+    using size_type = igraph_integer_t;
 
     explicit igVec(igCaptureType<igraph_type> v) : vec(v.obj) { }
     explicit igVec(igAliasType<igraph_type> v) : ptr(&v.obj) { }
@@ -85,16 +87,22 @@ public:
     const_iterator begin() const { return ptr->stor_begin; }
     const_iterator end() const { return ptr->end; }
 
+    const_iterator cbegin() const { return ptr->stor_begin; }
+    const_iterator cend() const { return ptr->end; }
+
     value_type *data() { return begin(); }
 
-    value_type &back() { return *(ptr->end-1); }
-    const value_type &back() const { return *(ptr->end-1); }
+    reference &back() { return *(ptr->end-1); }
+    const_reference &back() const { return *(ptr->end-1); }
 
     size_type size() const { return ptr->end - ptr->stor_begin; }
+    constexpr size_type max_size() const { return IGRAPH_INTEGER_MAX; }
     size_type capacity() const { return ptr->stor_end - ptr->stor_begin; }
 
-    value_type & operator [] (size_type i) { return begin()[i]; }
-    const value_type & operator [] (size_type i) const { return begin()[i]; }
+    bool empty() const { return ptr->end == ptr->stor_begin; }
+
+    reference operator [] (size_type i) { return begin()[i]; }
+    const_reference operator [] (size_type i) const { return begin()[i]; }
 
     void clear() { FUNCTION(igraph_vector, clear)(ptr); }
     void resize(size_type size) { igCheck(FUNCTION(igraph_vector, resize)(ptr, size)); }
@@ -116,6 +124,22 @@ public:
 
     friend void swap(igVec &v1, igVec &v2) noexcept {
         FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
+    }
+
+    friend bool operator == (const igVec &lhs, const igVec &rhs) {
+        if (lhs.ptr == rhs.ptr)
+            return true;
+        size_type n = lhs.size();
+        if (rhs.size() != n)
+            return false;
+        for (size_type i = 0; i < n; ++i)
+            if (lhs[i] != rhs[i])
+                return false;
+        return true;
+    }
+
+    friend bool operator != (const igVec &lhs, const igVec &rhs) {
+        return ! (lhs == rhs);
     }
 };
 

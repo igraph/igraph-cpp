@@ -15,12 +15,13 @@ class LIST_TYPE_TEMPL {
 public:
     using value_type = ELEM_TYPE;
     using reference = value_type;
-    using size_type = igraph_integer_t;
+    using const_reference = const reference;
     using difference_type = igraph_integer_t;
+    using size_type = igraph_integer_t;
 
     template<typename ValueType, typename Reference> class base_iterator;
-    using iterator = base_iterator<value_type, value_type>;
-    using const_iterator = base_iterator<const value_type, const value_type>;
+    using iterator = base_iterator<value_type, reference>;
+    using const_iterator = base_iterator<const value_type, const_reference>;
 
     explicit LIST_TYPE(igCaptureType<igraph_type> tl) : list(tl.obj) { }
     explicit LIST_TYPE(igAliasType<igraph_type> tl) : ptr(&tl.obj) { }
@@ -53,10 +54,13 @@ public:
     operator const TYPE *() const { return ptr; }
 
     size_type size() const { return ptr->end - ptr->stor_begin; }
+    constexpr size_type max_size() const { return IGRAPH_INTEGER_MAX; }
     size_type capacity() const { return ptr->stor_end - ptr->stor_begin; }
 
+    bool empty() const { return ptr->end == ptr->stor_begin; }
+
     reference operator [] (size_type i) { return value_type(igAlias(ptr->stor_begin[i])); }
-    const reference operator [] (size_type i) const { return value_type(igAlias(ptr->stor_begin[i])); }
+    const_reference operator [] (size_type i) const { return value_type(igAlias(ptr->stor_begin[i])); }
 
     void clear() { FUNCTION(clear)(ptr); }
     void resize(size_type size) { igCheck(FUNCTION(resize)(ptr, size)); }
@@ -68,8 +72,11 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    const_iterator cbegin() const;
+    const_iterator cend() const;
+
     reference back() { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
-    const reference back() const { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
+    const_reference back() const { return value_type(igAlias(*FUNCTION(tail_ptr)(ptr))); }
 
     // List takes ownership of t
     void set(igraph_integer_t pos, value_type &t) {
@@ -123,6 +130,22 @@ public:
         FUNCTION(swap)(t1.ptr, t2.ptr);
     }
 
+    friend bool operator == (const LIST_TYPE &lhs, const LIST_TYPE &rhs) {
+        if (lhs.ptr == rhs.ptr)
+            return true;
+        size_type n = lhs.size();
+        if (rhs.size() != n)
+            return false;
+        for (size_type i = 0; i < n; ++i)
+            if (lhs[i] != rhs[i])
+                return false;
+        return true;
+    }
+
+    friend bool operator != (const LIST_TYPE &lhs, const LIST_TYPE &rhs) {
+        return ! (lhs == rhs);
+    }
+
 #ifdef GRAPH_LIST
     void set_directed(bool directed) {
         igraph_graph_list_set_directed(ptr, directed);
@@ -135,6 +158,7 @@ class LIST_TYPE_TEMPL::base_iterator {
 public:
     using value_type = ValueType;
     using difference_type = igraph_integer_t;
+    using pointer = void;
     using reference = Reference;
     using iterator_category = std::random_access_iterator_tag;
 
@@ -204,5 +228,8 @@ LIST_TYPE_TEMPL::iterator LIST_TYPE_TEMPL::end() { return ptr->end; }
 
 LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::begin() const { return ptr->stor_begin; }
 LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::end() const { return ptr->end; }
+
+LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::cbegin() const { return ptr->stor_begin; }
+LIST_TYPE_TEMPL::const_iterator LIST_TYPE_TEMPL::cend() const { return ptr->end; }
 
 #include <igraph_pmt_off.h>
