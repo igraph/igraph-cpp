@@ -18,9 +18,9 @@ public:
     using size_type = igraph_integer_t;
     using difference_type = igraph_integer_t;
 
-    template<typename ValueType, typename Pointer, typename Reference> class base_iterator;
-    using iterator = base_iterator<value_type, value_type *, value_type>;
-    using const_iterator = base_iterator<const value_type, const value_type *, const value_type>;
+    template<typename ValueType, typename Reference> class base_iterator;
+    using iterator = base_iterator<value_type, value_type>;
+    using const_iterator = base_iterator<const value_type, const value_type>;
 
     explicit LIST_TYPE(igCaptureType<igraph_type> tl) : list(tl.obj) { }
     explicit LIST_TYPE(igAliasType<igraph_type> tl) : ptr(&tl.obj) { }
@@ -130,12 +130,11 @@ public:
 #endif
 };
 
-template<typename ValueType, typename Pointer, typename Reference>
+template<typename ValueType, typename Reference>
 class LIST_TYPE_TEMPL::base_iterator {
 public:
     using value_type = ValueType;
     using difference_type = igraph_integer_t;
-    using pointer = Pointer;
     using reference = Reference;
     using iterator_category = std::random_access_iterator_tag;
 
@@ -146,6 +145,11 @@ private:
     base_iterator(typename value_type::igraph_type *p_) : p(p_) { }
 
 public:
+
+    // Make iterator convertible to const_iterator
+    base_iterator(const base_iterator<typename std::remove_const<ValueType>::type,
+                                      typename std::remove_const<Reference>::type> &it) :
+        p(it.p) { }
 
     reference operator * () const { return value_type(igAlias(*p)); }
     reference operator [] (difference_type i) const { return value_type(igAlias(*p)); }
