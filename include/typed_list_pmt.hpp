@@ -181,6 +181,11 @@ private:
 
 public:
 
+    base_iterator() = default;
+    base_iterator(base_iterator &&) = default;
+    base_iterator & operator = (const base_iterator &) = default;
+    base_iterator & operator = (base_iterator &&) = default;
+
     // Make iterator convertible to const_iterator
     base_iterator(const base_iterator<typename std::remove_const<ValueType>::type,
                                       typename std::remove_const<Reference>::type> &it) :
@@ -222,6 +227,10 @@ public:
     }
 
     friend base_iterator operator + (const base_iterator &it, difference_type n) {
+        return it.p + n;
+    }
+
+    friend base_iterator operator + (difference_type n, const base_iterator &it) {
         return it.p + n;
     }
 
