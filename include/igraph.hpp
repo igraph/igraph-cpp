@@ -86,6 +86,8 @@ using igIntVecList = igVecList<igraph_integer_t>;
 using igBoolVec = igVec<igraph_bool_t>;
 using igBoolMat = igMat<igraph_bool_t>;
 
+#include "rng_scope.hpp"
+
 class igGraphList;
 
 class igGraph {
