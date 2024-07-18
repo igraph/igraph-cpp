@@ -48,4 +48,6 @@ install(EXPORT igraph-cpp-targets
         NAMESPACE igraph::
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/igraph-cpp)
 
-add_subdirectory(examples)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    add_subdirectory(examples)
+endif()
