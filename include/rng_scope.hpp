@@ -3,12 +3,12 @@ public:
     RNGScope(igraph_uint_t seed) : RNGScope(seed, &igraph_rngtype_pcg32) {}
 
     RNGScope(igraph_uint_t seed, const igraph_rng_type_t* type) {
-        igCheck(igraph_rng_init(&current, type));
+        check(igraph_rng_init(&current, type));
 
         auto errcode = igraph_rng_seed(&current, seed);
         if (errcode != IGRAPH_SUCCESS) {
             igraph_rng_destroy(&current);
-            throw igException(errcode);
+            throw Exception(errcode);
         }
 
         previous = *(igraph_rng_default());
@@ -16,7 +16,7 @@ public:
     }
 
     RNGScope(const igraph_rng_type_t* type) {
-        igCheck(igraph_rng_init(&current, type));
+        check(igraph_rng_init(&current, type));
         previous = *(igraph_rng_default());
         igraph_rng_set_default(&current);
     }

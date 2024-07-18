@@ -8,11 +8,11 @@
 using namespace ig;
 
 // Helper function to print a graph.
-std::ostream & operator << (std::ostream &out, const igGraph &g) {
+std::ostream & operator << (std::ostream &out, const Graph &g) {
     out << "directed: " << (g.is_directed() ? "true" : "false") << std::endl;
     out << "vcount: " << g.vcount() << std::endl;
 
-    igIntVec edges;
+    IntVec edges;
     igraph_edges(g, igraph_ess_all(IGRAPH_EDGEORDER_ID), edges);
     out << "edges: " << edges << std::endl;
     return out;
@@ -21,10 +21,10 @@ std::ostream & operator << (std::ostream &out, const igGraph &g) {
 int main() {
 
     // Create a directed graph from its edge list.
-    igGraph g(igIntVec{0,1, 1,2, 3,4, 5,6}, 9, IGRAPH_DIRECTED);
+    Graph g(IntVec{0,1, 1,2, 3,4, 5,6}, 9, IGRAPH_DIRECTED);
 
-    // igGraphList is a wrapper for igraph_graph_list_t.
-    igGraphList list;
+    // GraphList is a wrapper for igraph_graph_list_t.
+    GraphList list;
 
     // Decompose the graph into its weakly connected components.
     igraph_decompose(g, list, IGRAPH_WEAK, -1, -1);
@@ -36,7 +36,7 @@ int main() {
 
     // Reverse sort the graph list.
     std::sort(list.begin(), list.end(),
-              [](const igGraph &a, const igGraph &b) { return a.vcount() < b.vcount(); });
+              [](const Graph &a, const Graph &b) { return a.vcount() < b.vcount(); });
 
     // The two smallest components are the same graph because they are both singletons.
     // Note that the == operator compares labelled graphs without attributes,

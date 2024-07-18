@@ -12,16 +12,16 @@ int main() {
     igraph_rng_seed(igraph_rng_default(), 42); // seed RNG before first use
 
     igraph_t igraph;
-    igraph_square_lattice(&igraph, igIntVec({30,30}),
+    igraph_square_lattice(&igraph, IntVec({30,30}),
                           0, IGRAPH_UNDIRECTED,
-                          /* mutual= */ false, igBoolVec({true, true}));
-    igGraph graph(igCapture(igraph));
+                          /* mutual= */ false, BoolVec({true, true}));
+    Graph graph(Capture(igraph));
 
     igraph_real_t avg_path_len;
     igraph_average_path_length(graph, &avg_path_len, nullptr, IGRAPH_UNDIRECTED, /* unconn= */ true);
     std::cout << "Average path length (lattice): " << avg_path_len << std::endl;
 
-    igIntVec edges(20);
+    IntVec edges(20);
     for (auto &el : edges)
         el = RNG_INTEGER(0, graph.vcount());
 

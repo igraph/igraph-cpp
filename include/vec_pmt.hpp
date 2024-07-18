@@ -7,9 +7,9 @@
 //    In this case ptr points to the internal vec object, which is initialized.
 //  - It can alias an igraph_vector_t, essentially act as a reference to it. In this
 //    case ptr is pointing to the external vector, and the destructor does not do anything.
-// To create an igVec that aliases v, use igVec(igAlias(v)). To take over the ownership of
-// v's data, use igVec(igCapture(v)). In the latter case, v must no longer be used directly.
-template<> class igVec<BASE> {
+// To create an Vec that aliases v, use Vec(Alias(v)). To take over the ownership of
+// v's data, use Vec(Capture(v)). In the latter case, v must no longer be used directly.
+template<> class Vec<BASE> {
     using igraph_type = TYPE(igraph_vector);
 
     igraph_type vec;
@@ -17,7 +17,7 @@ template<> class igVec<BASE> {
 
     bool is_alias() const { return ptr != &vec; }
 
-    friend class igVecList<BASE>;
+    friend class VecList<BASE>;
 
 public:
     using value_type = BASE;
@@ -28,14 +28,14 @@ public:
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
-    explicit igVec(igCaptureType<igraph_type> v) : vec(v.obj) { }
-    explicit igVec(igAliasType<igraph_type> v) : ptr(&v.obj) { }
+    explicit Vec(CaptureType<igraph_type> v) : vec(v.obj) { }
+    explicit Vec(AliasType<igraph_type> v) : ptr(&v.obj) { }
 
-    explicit igVec(size_type n = 0) {
-        igCheck(FUNCTION(igraph_vector, init)(ptr, n));
+    explicit Vec(size_type n = 0) {
+        check(FUNCTION(igraph_vector, init)(ptr, n));
     }
 
-    igVec(igVec &&other) noexcept {
+    Vec(Vec &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -44,24 +44,24 @@ public:
         other.ptr = nullptr;
     }
 
-    igVec(const igVec &other) {
-        igCheck(FUNCTION(igraph_vector, init_copy)(ptr, other.ptr));
+    Vec(const Vec &other) {
+        check(FUNCTION(igraph_vector, init_copy)(ptr, other.ptr));
     }
 
-    igVec(const igraph_type *v) {
-        igCheck(FUNCTION(igraph_vector, init_copy)(ptr, v));
+    Vec(const igraph_type *v) {
+        check(FUNCTION(igraph_vector, init_copy)(ptr, v));
     }
 
-    igVec(std::initializer_list<BASE> list) {
-        igCheck(FUNCTION(igraph_vector, init_array)(ptr, list.begin(), list.size()));
+    Vec(std::initializer_list<BASE> list) {
+        check(FUNCTION(igraph_vector, init_array)(ptr, list.begin(), list.size()));
     }
 
-    igVec & operator = (const igVec &other) {
-        igCheck(FUNCTION(igraph_vector, update)(ptr, other.ptr));
+    Vec & operator = (const Vec &other) {
+        check(FUNCTION(igraph_vector, update)(ptr, other.ptr));
         return *this;
     }
 
-    igVec & operator = (igVec &&other) noexcept {
+    Vec & operator = (Vec &&other) noexcept {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
         if (other.is_alias()) {
@@ -74,7 +74,7 @@ public:
         return *this;
     }
 
-    ~igVec() {
+    ~Vec() {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
     }
@@ -106,11 +106,11 @@ public:
     const_reference operator [] (size_type i) const { return begin()[i]; }
 
     void clear() { FUNCTION(igraph_vector, clear)(ptr); }
-    void resize(size_type size) { igCheck(FUNCTION(igraph_vector, resize)(ptr, size)); }
-    void reserve(size_type capacity) { igCheck(FUNCTION(igraph_vector, reserve)(ptr, capacity)); }
+    void resize(size_type size) { check(FUNCTION(igraph_vector, resize)(ptr, size)); }
+    void reserve(size_type capacity) { check(FUNCTION(igraph_vector, reserve)(ptr, capacity)); }
     void shrink_to_fit() { FUNCTION(igraph_vector, resize_min)(ptr); }
 
-    void push_back(value_type elem) { igCheck(FUNCTION(igraph_vector, push_back)(ptr, elem)); }
+    void push_back(value_type elem) { check(FUNCTION(igraph_vector, push_back)(ptr, elem)); }
     value_type pop_back() { return FUNCTION(igraph_vector, pop_back)(ptr); }
 
     iterator erase(const_iterator pos) {
@@ -123,17 +123,17 @@ public:
         return const_cast<iterator>(first);
     }
 
-    friend void swap(igVec &v1, igVec &v2) noexcept {
+    friend void swap(Vec &v1, Vec &v2) noexcept {
         FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
     }
 
-    // Necessary to allow some STL algorithms to work on igVecList,
-    // whose iterator dereferences to an aliasing igVec.
-    friend void swap(igVec &&v1, igVec &&v2) noexcept {
+    // Necessary to allow some STL algorithms to work on VecList,
+    // whose iterator dereferences to an aliasing Vec.
+    friend void swap(Vec &&v1, Vec &&v2) noexcept {
         FUNCTION(igraph_vector, swap)(v1.ptr, v2.ptr);
     }
 
-    friend bool operator == (const igVec &lhs, const igVec &rhs) {
+    friend bool operator == (const Vec &lhs, const Vec &rhs) {
         if (lhs.ptr == rhs.ptr)
             return true;
         size_type n = lhs.size();
@@ -145,7 +145,7 @@ public:
         return true;
     }
 
-    friend bool operator != (const igVec &lhs, const igVec &rhs) {
+    friend bool operator != (const Vec &lhs, const Vec &rhs) {
         return ! (lhs == rhs);
     }
 };

@@ -1,8 +1,8 @@
 
 #define MATRIX_LIST
-#define LIST_TYPE igMatList
-#define LIST_TYPE_TEMPL igMatList<BASE>
-#define ELEM_TYPE igMat<BASE>
+#define LIST_TYPE MatList
+#define LIST_TYPE_TEMPL MatList<BASE>
+#define ELEM_TYPE Mat<BASE>
 #include "typed_list_pmt.hpp"
 #undef ELEM_TYPE
 #undef LIST_TYPE_TEMPL

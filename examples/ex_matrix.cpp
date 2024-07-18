@@ -8,7 +8,7 @@ using namespace ig;
 int main() {
 
     // Create a matrix using a list initializer.
-    igRealMat mat = {{1, 2, 3},
+    RealMat mat = {{1, 2, 3},
                      {4, 5, 6}};
 
     // Print the matrix using igraph features.

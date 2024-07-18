@@ -1,7 +1,7 @@
 
 #include <igraph_pmt.h>
 
-template<> class igMat<BASE> {
+template<> class Mat<BASE> {
     using igraph_type = TYPE(igraph_matrix);
 
     igraph_type mat;
@@ -9,7 +9,7 @@ template<> class igMat<BASE> {
 
     bool is_alias() const { return ptr != &mat; }
 
-    friend class igMatList<BASE>;
+    friend class MatList<BASE>;
 
 public:
     using value_type = BASE;
@@ -20,14 +20,14 @@ public:
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
-    explicit igMat(igCaptureType<igraph_type> m) : mat(m.obj) { }
-    explicit igMat(igAliasType<igraph_type> m) : ptr(&m.obj) { }
+    explicit Mat(CaptureType<igraph_type> m) : mat(m.obj) { }
+    explicit Mat(AliasType<igraph_type> m) : ptr(&m.obj) { }
 
-    explicit igMat(size_type n = 0, size_type m = 0) {
-        igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
+    explicit Mat(size_type n = 0, size_type m = 0) {
+        check(FUNCTION(igraph_matrix, init)(ptr, n, m));
     }
 
-    igMat(igMat &&other) noexcept {
+    Mat(Mat &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -36,20 +36,20 @@ public:
         other.ptr = nullptr;
     }
 
-    igMat(const igMat &other) {
-        igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, other.ptr));
+    Mat(const Mat &other) {
+        check(FUNCTION(igraph_matrix, init_copy)(ptr, other.ptr));
     }
 
-    igMat(const igraph_type *v) {
-        igCheck(FUNCTION(igraph_matrix, init_copy)(ptr, v));
+    Mat(const igraph_type *v) {
+        check(FUNCTION(igraph_matrix, init_copy)(ptr, v));
     }
 
-    igMat & operator = (const igMat &other) {
-        igCheck(FUNCTION(igraph_matrix, update)(ptr, other.ptr));
+    Mat & operator = (const Mat &other) {
+        check(FUNCTION(igraph_matrix, update)(ptr, other.ptr));
         return *this;
     }
 
-    igMat & operator = (igMat &&other) noexcept {
+    Mat & operator = (Mat &&other) noexcept {
         if (! is_alias())
             FUNCTION(igraph_matrix, destroy)(ptr);
         if (other.is_alias()) {
@@ -62,10 +62,10 @@ public:
         return *this;
     }
 
-    igMat(std::initializer_list<std::initializer_list<BASE>> values) {
+    Mat(std::initializer_list<std::initializer_list<BASE>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;
-        igCheck(FUNCTION(igraph_matrix, init)(ptr, n, m));
+        check(FUNCTION(igraph_matrix, init)(ptr, n, m));
 
         size_type i = 0;
         for (const auto &row : values) {
@@ -79,7 +79,7 @@ public:
         }
     }
 
-    ~igMat() {
+    ~Mat() {
         if (!is_alias()) {
             FUNCTION(igraph_matrix, destroy)(ptr);
         }
@@ -114,21 +114,21 @@ public:
     reference operator () (size_type i, size_type j) { return MATRIX(*ptr, i, j); }
     const_reference operator () (size_type i, size_type j) const { return MATRIX(*ptr, i, j); }
 
-    void resize(size_type n, size_type m) { igCheck(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
+    void resize(size_type n, size_type m) { check(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
 
-    friend void swap(igMat &m1, igMat &m2) noexcept {
+    friend void swap(Mat &m1, Mat &m2) noexcept {
         FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
     }
 
-    // Necessary to allow some STL algorithms to work on igMatList,
-    // whose iterator dereferences to an aliasing igMat.
-    friend void swap(igMat &&m1, igMat &&m2) noexcept {
+    // Necessary to allow some STL algorithms to work on MatList,
+    // whose iterator dereferences to an aliasing Mat.
+    friend void swap(Mat &&m1, Mat &&m2) noexcept {
         FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
     }
 
-    friend bool operator == (const igMat &lhs, const igMat &rhs) {
+    friend bool operator == (const Mat &lhs, const Mat &rhs) {
         if (lhs.ptr == rhs.ptr)
             return true;
         size_type n = lhs.size();
@@ -140,7 +140,7 @@ public:
         return true;
     }
 
-    friend bool operator != (const igMat &lhs, const igMat &rhs) {
+    friend bool operator != (const Mat &lhs, const Mat &rhs) {
         return ! (lhs == rhs);
     }
 };

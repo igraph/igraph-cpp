@@ -12,24 +12,24 @@ using namespace ig;
 
 int main() {
 
-    // igRealVec is a RAII wrapper to igraph_vector_t.
+    // RealVec is a RAII wrapper to igraph_vector_t.
     // When it goes out of scope, it is properly destroyed.
-    // igRealVec is a convenience name for igVec<igraph_real_t>.
-    igRealVec v;
+    // RealVec is a convenience name for Vec<igraph_real_t>.
+    RealVec v;
 
     // The initial size is zero.
     std::cout << v.size() << std::endl;
 
-    // igVec<XXX> is implicitly convertible to the corresponding igraph_vector_XXX_t * pointer.
+    // Vec<XXX> is implicitly convertible to the corresponding igraph_vector_XXX_t * pointer.
     igraph_vector_resize(v, 10);
     std::cout << v.size() << std::endl;
 
-    // igVec<> has STL-compatible convenience member functions for common operations.
+    // Vec<> has STL-compatible convenience member functions for common operations.
     // These generally call the corresponding igraph function.
     v.resize(5);
     std::cout << v.size() << std::endl;
 
-    // Note that igRealVec::resize() has a behaviour identical to that of igraph_vector_resize().
+    // Note that RealVec::resize() has a behaviour identical to that of igraph_vector_resize().
     // It does not set the newly added elements to zero, but we can easily do this using
     // igraph's standard facilities.
     igraph_vector_null(v);
@@ -45,7 +45,7 @@ int main() {
     // Use standard C++ features to fill the vector with an increasing sequence.
     std::iota(v.begin(), v.end(), 3);
 
-    // See ex_vector_print.hpp for stream support for igVec.
+    // See ex_vector_print.hpp for stream support for Vec.
     std::cout << v << std::endl;
 
     // Use igraph features to fill the vector with an increasing sequence.
@@ -57,8 +57,8 @@ int main() {
     std::cout << v << std::endl;
 
     // Create an integer list initializer.
-    // igIntVec is a convenience alias to igVec<igraph_integer_t>.
-    igIntVec iv = {4, 3, 0, 9, -3};
+    // IntVec is a convenience alias to Vec<igraph_integer_t>.
+    IntVec iv = {4, 3, 0, 9, -3};
     std::cout << "Original: " << iv << std::endl;
 
     // Sort it using STL facilities and print it.
@@ -66,7 +66,7 @@ int main() {
     std::cout << "Sorted: " << iv << std::endl;
 
     // Create a boolean vector using a list initializer and print it.
-    igBoolVec bv = {true, false, true, false};
+    BoolVec bv = {true, false, true, false};
     std::cout << "Boolean vector: " << bv << std::endl;
 
     return 0;

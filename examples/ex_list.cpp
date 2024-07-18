@@ -10,7 +10,7 @@ using namespace ig;
 
 // Support for printing vector lists.
 template<typename T>
-std::ostream & operator << (std::ostream &out, const igVecList<T> &list) {
+std::ostream & operator << (std::ostream &out, const VecList<T> &list) {
     for (const auto &vec : list)
         std::cout << '(' << vec << ')' << std::endl;
     return out;
@@ -23,11 +23,11 @@ int main() {
 
     igraph_t ig;
     igraph_erdos_renyi_game_gnp(&ig, 10, 0.5, IGRAPH_UNDIRECTED, IGRAPH_NO_LOOPS);
-    igGraph g(igCapture(ig));
+    Graph g(Capture(ig));
 
-    // igIntVecList is a wrapper for igraph_vector_int_list.
-    // It is a convenience alias to igIntVec<igraph_integer_t>.
-    igIntVecList list;
+    // IntVecList is a wrapper for igraph_vector_int_list.
+    // It is a convenience alias to IntVec<igraph_integer_t>.
+    IntVecList list;
 
     // Compute maximal cliques and write the result into 'list'.
     igraph_maximal_cliques(g, list, -1, -1);
@@ -45,7 +45,7 @@ int main() {
     assert(list.back().empty());
 
     // Add another element.
-    list.push_back(igIntVec{1,2,3});
+    list.push_back(IntVec{1,2,3});
 
     // Reverse the list.
     std::reverse(list.begin(), list.end());

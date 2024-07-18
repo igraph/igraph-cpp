@@ -18,46 +18,46 @@ namespace ig {
 
 // Error handling
 
-struct igException : std::runtime_error {
+struct Exception : std::runtime_error {
     igraph_error_t error;
 
-    explicit igException(igraph_error_t error_) :
+    explicit Exception(igraph_error_t error_) :
             std::runtime_error(igraph_strerror(error_)),
             error(error_) { }
 };
 
-inline void igCheck(igraph_error_t error) {
+inline void check(igraph_error_t error) {
     if (error != IGRAPH_SUCCESS)
-        throw igException{error};
+        throw Exception{error};
 }
 
 // Support structures
 
 template<typename T>
-struct igCaptureType {
+struct CaptureType {
     T &obj;
-    explicit igCaptureType(T &obj) : obj(obj) { }
+    explicit CaptureType(T &obj) : obj(obj) { }
 };
 
 template<typename T>
-inline igCaptureType<typename std::remove_reference<T>::type>
-igCapture(T &&obj) { return igCaptureType<typename std::remove_reference<T>::type>(obj); }
+inline CaptureType<typename std::remove_reference<T>::type>
+Capture(T &&obj) { return CaptureType<typename std::remove_reference<T>::type>(obj); }
 
 template<typename T>
-struct igAliasType {
+struct AliasType {
     T &obj;
-    explicit igAliasType(T &obj) : obj(obj) { }
+    explicit AliasType(T &obj) : obj(obj) { }
 };
 
 template<typename T>
-inline igAliasType<T> igAlias(T &obj) { return igAliasType<T>(obj); }
+inline AliasType<T> Alias(T &obj) { return AliasType<T>(obj); }
 
 // Main data structures
 
-template<typename T> class igVec;
-template<typename T> class igMat;
-template<typename T> class igVecList;
-template<typename T> class igMatList;
+template<typename T> class Vec;
+template<typename T> class Mat;
+template<typename T> class VecList;
+template<typename T> class MatList;
 
 #define BASE_IGRAPH_REAL
 #include "vec_pmt.hpp"
@@ -65,32 +65,32 @@ template<typename T> class igMatList;
 #include "vec_list_pmt.hpp"
 #include "mat_list_pmt.hpp"
 #undef BASE_IGRAPH_REAL
-using igRealVec = igVec<igraph_real_t>;
-using igRealMat = igMat<igraph_real_t>;
-using igRealVecList = igVecList<igraph_real_t>;
-using igRealMatList = igMatList<igraph_real_t>;
+using RealVec = Vec<igraph_real_t>;
+using RealMat = Mat<igraph_real_t>;
+using RealVecList = VecList<igraph_real_t>;
+using RealMatList = MatList<igraph_real_t>;
 
 #define BASE_INT
 #include "vec_pmt.hpp"
 #include "mat_pmt.hpp"
 #include "vec_list_pmt.hpp"
 #undef BASE_INT
-using igIntVec = igVec<igraph_integer_t>;
-using igIntMat = igMat<igraph_integer_t>;
-using igIntVecList = igVecList<igraph_integer_t>;
+using IntVec = Vec<igraph_integer_t>;
+using IntMat = Mat<igraph_integer_t>;
+using IntVecList = VecList<igraph_integer_t>;
 
 #define BASE_BOOL
 #include "vec_pmt.hpp"
 #include "mat_pmt.hpp"
 #undef BASE_BOOL
-using igBoolVec = igVec<igraph_bool_t>;
-using igBoolMat = igMat<igraph_bool_t>;
+using BoolVec = Vec<igraph_bool_t>;
+using BoolMat = Mat<igraph_bool_t>;
 
 #include "rng_scope.hpp"
 
-class igGraphList;
+class GraphList;
 
-class igGraph {
+class Graph {
     using igraph_type = igraph_t;
 
     igraph_t graph;
@@ -98,29 +98,29 @@ class igGraph {
 
     bool is_alias() const { return ptr != &graph; }
 
-    friend class igGraphList;
+    friend class GraphList;
 
 public:
-    explicit igGraph(igCaptureType<igraph_t> g) : graph(g.obj) { }
-    explicit igGraph(igAliasType<igraph_t> g) : ptr(&g.obj) { }
+    explicit Graph(CaptureType<igraph_t> g) : graph(g.obj) { }
+    explicit Graph(AliasType<igraph_t> g) : ptr(&g.obj) { }
 
-    explicit igGraph(const igraph_t *g) {
-        igCheck(igraph_copy(ptr, g));
+    explicit Graph(const igraph_t *g) {
+        check(igraph_copy(ptr, g));
     }
 
-    explicit igGraph(igraph_integer_t n = 0, bool directed = false) {
-        igCheck(igraph_empty(ptr, n, directed));
+    explicit Graph(igraph_integer_t n = 0, bool directed = false) {
+        check(igraph_empty(ptr, n, directed));
     }
 
-    explicit igGraph(const igraph_vector_int_t *edges, igraph_integer_t n = 0, bool directed = false) {
-        igCheck(igraph_create(ptr, edges, n, directed));
+    explicit Graph(const igraph_vector_int_t *edges, igraph_integer_t n = 0, bool directed = false) {
+        check(igraph_create(ptr, edges, n, directed));
     }
 
-    igGraph(const igGraph &g) {
-        igCheck(igraph_copy(ptr, g.ptr));
+    Graph(const Graph &g) {
+        check(igraph_copy(ptr, g.ptr));
     }
 
-    igGraph(igGraph &&other) noexcept {
+    Graph(Graph &&other) noexcept {
         if (other.is_alias()) {
             ptr = other.ptr;
         } else {
@@ -129,9 +129,9 @@ public:
         other.ptr = nullptr;
     }
 
-    igGraph & operator = (const igGraph &) = delete;
+    Graph & operator = (const Graph &) = delete;
 
-    igGraph & operator = (igGraph &&other) noexcept {
+    Graph & operator = (Graph &&other) noexcept {
         if (! is_alias())
             igraph_destroy(ptr);
         if (other.is_alias()) {
@@ -144,7 +144,7 @@ public:
         return *this;
     }
 
-    igGraph & operator = (igCaptureType<igraph_t> g) {
+    Graph & operator = (CaptureType<igraph_t> g) {
         if (! is_alias())
             igraph_destroy(ptr);
         graph = g.obj;
@@ -152,14 +152,14 @@ public:
         return *this;
     }
 
-    igGraph & operator = (igAliasType<igraph_t> g) {
+    Graph & operator = (AliasType<igraph_t> g) {
         if (! is_alias())
             igraph_destroy(ptr);
         ptr = &g.obj;
         return *this;
     }
 
-    ~igGraph() {
+    ~Graph() {
         if (! is_alias())
             igraph_destroy(ptr);
     }
@@ -167,15 +167,15 @@ public:
     operator igraph_t *() { return ptr; }
     operator const igraph_t *() const { return ptr; }
 
-    friend void swap(igGraph &g1, igGraph &g2) noexcept {
+    friend void swap(Graph &g1, Graph &g2) noexcept {
         igraph_t tmp = *g1.ptr;
         *g1.ptr = *g2.ptr;
         *g2.ptr = tmp;
     }
 
-    // Necessary to allow some STL algorithms to work on igGraphList,
-    // whose iterator dereferences to an aliasing igGraph.
-    friend void swap(igGraph &&g1, igGraph &&g2) noexcept {
+    // Necessary to allow some STL algorithms to work on GraphList,
+    // whose iterator dereferences to an aliasing Graph.
+    friend void swap(Graph &&g1, Graph &&g2) noexcept {
         igraph_t tmp = *g1.ptr;
         *g1.ptr = *g2.ptr;
         *g2.ptr = tmp;
@@ -189,55 +189,55 @@ public:
 
     bool is_connected(igraph_connectedness_t mode = IGRAPH_WEAK) const {
         igraph_bool_t res;
-        igCheck(igraph_is_connected(ptr, &res, mode));
+        check(igraph_is_connected(ptr, &res, mode));
         return res;
     }
 
     bool is_simple() const {
         igraph_bool_t res;
-        igCheck(igraph_is_simple(ptr, &res));
+        check(igraph_is_simple(ptr, &res));
         return res;
     }
 
     bool has_loop() const {
         igraph_bool_t res;
-        igCheck(igraph_has_loop(ptr, &res));
+        check(igraph_has_loop(ptr, &res));
         return res;
     }
 
     bool has_multiple() const {
         igraph_bool_t res;
-        igCheck(igraph_has_multiple(ptr, &res));
+        check(igraph_has_multiple(ptr, &res));
         return res;
     }
 
     bool has_mutual(bool loops = false) const {
         igraph_bool_t res;
-        igCheck(igraph_has_mutual(ptr, &res, loops));
+        check(igraph_has_mutual(ptr, &res, loops));
         return res;
     }
 
     bool is_tree(igraph_neimode_t mode = IGRAPH_ALL) const {
         igraph_bool_t res;
-        igCheck(igraph_is_tree(ptr, &res, nullptr, mode));
+        check(igraph_is_tree(ptr, &res, nullptr, mode));
         return res;
     }
 
     bool is_forest(igraph_neimode_t mode = IGRAPH_ALL) const {
         igraph_bool_t res;
-        igCheck(igraph_is_forest(ptr, &res, nullptr, mode));
+        check(igraph_is_forest(ptr, &res, nullptr, mode));
         return res;
     }
 
     bool is_dag() const {
         igraph_bool_t res;
-        igCheck(igraph_is_dag(ptr, &res));
+        check(igraph_is_dag(ptr, &res));
         return res;
     }
 
     bool is_acyclic() const {
         igraph_bool_t res;
-        igCheck(igraph_is_acyclic(ptr, &res));
+        check(igraph_is_acyclic(ptr, &res));
         return res;
     }
 
@@ -247,13 +247,13 @@ public:
 
     // Note that the comparison is between labelled graphs, i.e. it does not test
     // for isomorphism. It also ignores attributes.
-    friend bool operator == (const igGraph &lhs, const igGraph &rhs) {
+    friend bool operator == (const Graph &lhs, const Graph &rhs) {
         igraph_bool_t res;
-        igCheck(igraph_is_same_graph(lhs, rhs, &res));
+        check(igraph_is_same_graph(lhs, rhs, &res));
         return res;
     }
 
-    friend bool operator != (const igGraph &lhs, const igGraph &rhs) {
+    friend bool operator != (const Graph &lhs, const Graph &rhs) {
         return ! (lhs == rhs);
     }
 };

@@ -1,8 +1,8 @@
 
 #define GRAPH_LIST
-#define LIST_TYPE igGraphList
-#define LIST_TYPE_TEMPL igGraphList
-#define ELEM_TYPE igGraph
+#define LIST_TYPE GraphList
+#define LIST_TYPE_TEMPL GraphList
+#define ELEM_TYPE Graph
 #include "typed_list_pmt.hpp"
 #undef ELEM_TYPE
 #undef LIST_TYPE_TEMPL

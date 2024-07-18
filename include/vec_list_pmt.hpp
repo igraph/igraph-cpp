@@ -1,8 +1,8 @@
 
 #define VECTOR_LIST
-#define LIST_TYPE igVecList
-#define LIST_TYPE_TEMPL igVecList<BASE>
-#define ELEM_TYPE igVec<BASE>
+#define LIST_TYPE VecList
+#define LIST_TYPE_TEMPL VecList<BASE>
+#define ELEM_TYPE Vec<BASE>
 #include "typed_list_pmt.hpp"
 #undef ELEM_TYPE
 #undef LIST_TYPE_TEMPL
