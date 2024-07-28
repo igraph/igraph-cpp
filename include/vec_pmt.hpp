@@ -95,8 +95,8 @@ public:
 
     value_type *data() { return begin(); }
 
-    reference &back() { return *(end() - 1); }
-    const_reference &back() const { return *(end() - 1); }
+    reference back() { return *(end() - 1); }
+    const_reference back() const { return *(end() - 1); }
 
     size_type size() const { return ptr->end - ptr->stor_begin; }
     constexpr size_type max_size() const { return IGRAPH_INTEGER_MAX; }
