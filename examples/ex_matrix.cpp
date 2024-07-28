@@ -6,10 +6,10 @@
 using namespace ig;
 
 // ig::Mat is a C++ wrapper for igraph_matrix_t and its various specializations.
-//   igRealMat    = igMat<igraph_real_t>                igraph_matrix_t
-//   igIntMat     = igMat<igraph_integer_t>             igraph_matrix_int_t
-//   igBoolMat    = igMat<igraph_bool_t>                igraph_matrix_bool_t
-//   igComplexMat = igMat<std::complex<igraph_real_t>>  igraph_matrix_complex_t
+//   RealMat    = Mat<igraph_real_t>                igraph_matrix_t
+//   IntMat     = Mat<igraph_integer_t>             igraph_matrix_int_t
+//   BoolMat    = Mat<igraph_bool_t>                igraph_matrix_bool_t
+//   ComplexMat = Mat<std::complex<igraph_real_t>>  igraph_matrix_complex_t
 
 int main() {
 
@@ -33,7 +33,7 @@ int main() {
 
     // Matrices can be indexed according to rows and columns with parentheses ( )
     // or treated as a flat vector and indexed using  [ ].
-    std::cout << "Element (2,1) is " << mat(2, 1) << std::endl;
+    std::cout << "Element (2,1) is " << mat(2,1) << std::endl;
 
     // ig::Mat can be accessed as a flat-storage STL-compatible container.
     // Print all elements in flat storage order. igraph uses column-major storage.
