@@ -1,6 +1,6 @@
 
 class RNGScope {
-    igraph_rng_t *previous;
+    igraph_rng_t previous; // TODO for igraph 1.0, convert to pointer
     igraph_rng_t current;
 
     constexpr const static igraph_rng_type_t *default_type = &igraph_rngtype_pcg32;
@@ -18,7 +18,7 @@ public:
         }
 
         // TODO for igraph 1.0 where igraph_rng_set_default() returns the previous generator.
-        previous = igraph_rng_default();
+        previous = *igraph_rng_default();
         igraph_rng_set_default(&current);
     }
 
@@ -34,7 +34,7 @@ public:
     RNGScope & operator = (RNGScope &&) = delete;
 
     ~RNGScope() {
-        igraph_rng_set_default(previous);
+        igraph_rng_set_default(&previous);
         igraph_rng_destroy(&current);
     }
 };
