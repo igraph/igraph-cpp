@@ -192,7 +192,7 @@ public:
         p(it.p) { }
 
     reference operator * () const { return value_type(Alias(*p)); }
-    reference operator [] (difference_type i) const { return value_type(Alias(*p)); }
+    reference operator [] (difference_type i) const { return value_type(Alias(p[i])); }
 
     base_iterator & operator ++ () { ++p; return *this; }
     base_iterator operator ++ (int) { ++p; return *this; }
