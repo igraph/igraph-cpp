@@ -129,6 +129,9 @@ using BoolMat = Mat<igraph_bool_t>;
 using ComplexVec = Vec<std::complex<double>>;
 using ComplexMat = Mat<std::complex<double>>;
 
+// StrVec
+#include "strvec.hpp"
+
 #include "rng_scope.hpp"
 
 class GraphList;
