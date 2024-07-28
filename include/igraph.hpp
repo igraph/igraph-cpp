@@ -126,8 +126,8 @@ using BoolMat = Mat<igraph_bool_t>;
 #include "vec_pmt.hpp"
 #include "mat_pmt.hpp"
 #undef BASE_COMPLEX
-using ComplexVec = Vec<std::complex<double>>;
-using ComplexMat = Mat<std::complex<double>>;
+using ComplexVec = Vec<std::complex<igraph_real_t>>;
+using ComplexMat = Mat<std::complex<igraph_real_t>>;
 
 // StrVec
 #include "strvec.hpp"
