@@ -92,6 +92,15 @@ public:
     reference operator [] (size_type i) { return {ptr, i}; }
     const_reference operator [] (size_type i) const { return {ptr, i}; }
 
+    reference back();
+    const_reference back() const;
+
+    size_type size() const { return ptr->end - ptr->stor_begin; }
+    constexpr size_type max_size() const { return IGRAPH_INTEGER_MAX; }
+    size_type capacity() const { return ptr->stor_end - ptr->stor_begin; }
+
+    bool empty() const { return ptr->end == ptr->stor_begin; }
+
     void clear() { igraph_strvector_clear(ptr); }
     void resize(size_type size) { check(igraph_strvector_resize(ptr, size)); }
     void reserve(size_type capacity) { check(igraph_strvector_reserve(ptr, capacity)); }
@@ -209,6 +218,14 @@ StrVec::const_iterator StrVec::cbegin() const {
 
 StrVec::const_iterator StrVec::cend() const {
     return end();
+}
+
+StrVec::reference StrVec::back() {
+    return *(end() - 1);
+}
+
+StrVec::const_reference StrVec::back() const {
+    return *(end() - 1);
 }
 
 StrVec::iterator StrVec::erase(const_iterator first, const_iterator last) {
