@@ -33,7 +33,7 @@ int main() {
 
     // Matrices can be indexed according to rows and columns with parentheses ( )
     // or treated as a flat vector and indexed using  [ ].
-    std::cout << "Element (2,1) is " << mat(2,6) << std::endl;
+    std::cout << "Element (2,1) is " << mat(2, 1) << std::endl;
 
     // ig::Mat can be accessed as a flat-storage STL-compatible container.
     // Print all elements in flat storage order. igraph uses column-major storage.
