@@ -7,7 +7,6 @@
 #include <numeric>
 
 // Everything lives in the ig:: namespace.
-// We do not use igraph:: to avoid conflict with the igraphpp project.
 using namespace ig;
 
 int main() {
@@ -20,7 +19,8 @@ int main() {
     // The initial size is zero.
     std::cout << v.size() << std::endl;
 
-    // Vec<XXX> is implicitly convertible to the corresponding igraph_vector_XXX_t * pointer.
+    // Vec<XXX> is implicitly convertible to the corresponding igraph_vector_XXX_t * pointer,
+    // and can be used directly in igraph functions.
     igraph_vector_resize(v, 10);
     std::cout << v.size() << std::endl;
 
@@ -34,7 +34,7 @@ int main() {
     // igraph's standard facilities.
     igraph_vector_null(v);
 
-    // The indexing operator is available.
+    // The indexing operator is available, and can be used to either read or set values.
     v[3] = 1; v[4] = 2;
 
     // The STL compatibility provides support for range-based for loops.
@@ -52,12 +52,18 @@ int main() {
     igraph_vector_range(v, -3, 3);
     std::cout << v << std::endl;
 
-    // Erase the 2nd and 3rd elements.
+    // Erase the 2nd and 3rd elements using standard C++ features.
     v.erase(v.begin() + 1, v.begin() + 3);
     std::cout << v << std::endl;
 
-    // Create an integer list initializer.
-    // IntVec is a convenience alias to Vec<igraph_integer_t>.
+    // A wrapper is available for each igraph vector specialization:
+    //   RealVec    = Vec<igraph_real_t>         igraph_vector_t
+    //   IntVec     = Vec<igraph_integer_t>      igraph_vector_int_t
+    //   BoolVec    = Vec<igraph_bool_t>         igraph_vector_bool_t
+    //   ComplexVec = Vec<std::complex<double>>  igraph_vector_complex_t
+    // See ex_complex.cpp for more on ComplexVec.
+
+    // Vectors can be conveniently created using an initializer list syntax.
     IntVec iv = {4, 3, 0, 9, -3};
     std::cout << "Original: " << iv << std::endl;
 
@@ -65,7 +71,7 @@ int main() {
     std::stable_sort(iv.begin(), iv.end());
     std::cout << "Sorted: " << iv << std::endl;
 
-    // Create a boolean vector using a list initializer and print it.
+    // Create a boolean vector using an initializer list and print it.
     BoolVec bv = {true, false, true, false};
     std::cout << "Boolean vector: " << bv << std::endl;
 

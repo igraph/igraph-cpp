@@ -6,6 +6,8 @@
 
 using namespace ig;
 
+// ig::Graph is a wrapper for igraph_t. This file illustrates its use.
+
 int main() {
 
     // Basic graph handling example.
@@ -19,7 +21,8 @@ int main() {
         igraph_degree(g, deg, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
         std::cout << "Degrees: " << deg << std::endl;
 
-        // Print some of its properties.
+        // Print some of its properties. There are convenience member functions for the most
+        // commonly used graph properties, most of which are also cached in the igraph_t.
         std::cout << "Tree? " << (g.is_tree() ? "Yes" : "No") << std::endl;
         std::cout << "Connected? " << (g.is_connected() ? "Yes" : "No") << std::endl;
         std::cout << "Has loops? " << (g.has_loop() ? "Yes" : "No") << std::endl;
@@ -37,8 +40,9 @@ int main() {
         igraph_t ig;
         igraph_kary_tree(&ig, 5, 2, IGRAPH_TREE_UNDIRECTED);
 
-        // NOTE! Here 'g' "captures" 'ig', i.e. takes ownership of it,
-        // and will destroy it when it goes out of scope.
+        // Then associate it with an ig::Graph. The ig::Capture wrapper indicates
+        // that from now on the ig::Graph owns the igraph_t, i.e. it captures it
+        // and becomes responsible for its destruction.
         const Graph g(Capture(ig));
 
         // Compute and print the closeness centrality.

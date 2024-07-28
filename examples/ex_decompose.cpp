@@ -7,6 +7,8 @@
 
 using namespace ig;
 
+// This example illustrates the use of ig::GraphList, a wrapper for igraph_graph_list_t.
+
 // Helper function to print a graph.
 std::ostream & operator << (std::ostream &out, const Graph &g) {
     out << "directed: " << (g.is_directed() ? "true" : "false") << std::endl;

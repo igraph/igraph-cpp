@@ -5,6 +5,9 @@
 
 using namespace ig;
 
+// This example illustrates the use of ig::check(), which serves to convert
+// igraph error codes to C++ exceptions.
+
 int main() {
 
     // igraph's default error handler aborts the program on error. We can turn

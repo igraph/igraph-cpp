@@ -5,12 +5,15 @@
 using namespace ig;
 
 int main() {
+
+    // ig::ComplexVec is an alias for Vec<std::complex<igraph_real_t>>
+    // It wraps igraph_vector_complex_t.
+    // It is slightly different from other specializations of Vec in that
+    // it operates with std::complex<igraph_real_t> instead of igraph_complex_t.
+
     ComplexVec v;
 
     using namespace std::complex_literals;
-
-    // The member functions of ComplexVec all use std::complex<double>
-    // instead of igraph_complex_t.
 
     v.push_back(1.0 + 2.0i);
     v.push_back(3.0 + 2.0i);
@@ -20,19 +23,22 @@ int main() {
 
     std::cout << v << std::endl;
 
-    // ig::complex_cast interprets an std::complex<double> (or a pointer to it)
-    // as an igraph_complex_t ...
+    // std::complex<igraph_real_t> and igraph_complex_t are bitwise equivalent.
+    // ig::complex_cast serves to cast between the two (or pointers to them)
+    // in either direction. Here we use it to convert a C++ complex (or even real)
+    // to an igraph_complex_t, which is what igraph function expect.
     igraph_vector_complex_scale(v, complex_cast(-2.0));
 
     std::cout << v << std::endl;
 
-    // ... and can also work in reverse, interpreting an igraph_complex_t as
-    // an std::complex<double>
+    // The same complex_cast works in the opposite direction as well, to convert
+    // an igraph_complex_t into an easier-to-manipulate C++ complex.
     std::cout << "Popping the last element, which is: "
               << complex_cast(igraph_vector_complex_pop_back(v))
               << std::endl;
 
-    // Compute the spectrum of a non-symmetric matrix
+    // Example application of complex vectors and matrices:
+    // Compute the spectrum of a non-symmetric matrix.
 
     RealMat mat = {{1, 1, 2},
                    {0, 0, 0},

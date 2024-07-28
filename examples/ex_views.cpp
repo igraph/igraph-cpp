@@ -4,6 +4,12 @@
 
 using namespace ig;
 
+// This example demonstrates the two modes in which wrappers can operate:
+// They either capture the igraph data structure, and become responsible for its
+// destruction (indicated with ig::Capture) or they simply alias it, providing
+// a simple interface, but do not call the destructor when they go out of scope
+// (indicated with ig::Alias).
+
 int main() {
     igraph_vector_t ig_vec1;
     igraph_vector_init_range(&ig_vec1, 0, 5);
