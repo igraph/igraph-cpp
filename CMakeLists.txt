@@ -18,7 +18,7 @@ target_include_directories(igraph-cpp INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/igraph-cpp>
 )
-target_compile_features(igraph-cpp INTERFACE cxx_std_11)
+target_compile_features(igraph-cpp INTERFACE cxx_std_14)
 target_link_libraries(igraph-cpp INTERFACE igraph::igraph)
 
 # Provide an igraph-cpp-config.cmake file in the installation directory so

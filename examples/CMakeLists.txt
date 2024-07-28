@@ -6,6 +6,7 @@ function(make_test NAME)
 endfunction()
 
 make_test(ex_basic)
+make_test(ex_complex)
 make_test(ex_matrix)
 make_test(ex_graph)
 make_test(ex_list)

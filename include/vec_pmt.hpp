@@ -1,5 +1,5 @@
 
-#include <igraph_pmt.h>
+#include <igraph_pmt.hpp>
 
 // This wrapper class can operate in two modes, and can switch between them dynamically
 // as needed.
@@ -7,9 +7,9 @@
 //    In this case ptr points to the internal vec object, which is initialized.
 //  - It can alias an igraph_vector_t, essentially act as a reference to it. In this
 //    case ptr is pointing to the external vector, and the destructor does not do anything.
-// To create an Vec that aliases v, use Vec(Alias(v)). To take over the ownership of
+// To create a Vec that aliases v, use Vec(Alias(v)). To take over the ownership of
 // v's data, use Vec(Capture(v)). In the latter case, v must no longer be used directly.
-template<> class Vec<BASE> {
+template<> class Vec<OBASE> {
     using igraph_type = TYPE(igraph_vector);
 
     igraph_type vec;
@@ -17,14 +17,14 @@ template<> class Vec<BASE> {
 
     bool is_alias() const { return ptr != &vec; }
 
-    friend class VecList<BASE>;
+    friend class VecList<OBASE>;
 
 public:
-    using value_type = BASE;
-    using reference = BASE &;
-    using const_reference = const BASE &;
-    using iterator = BASE *;
-    using const_iterator = const BASE *;
+    using value_type = OBASE;
+    using reference = OBASE &;
+    using const_reference = const OBASE &;
+    using iterator = OBASE *;
+    using const_iterator = const OBASE *;
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
@@ -52,8 +52,8 @@ public:
         check(FUNCTION(igraph_vector, init_copy)(ptr, v));
     }
 
-    Vec(std::initializer_list<BASE> list) {
-        check(FUNCTION(igraph_vector, init_array)(ptr, list.begin(), list.size()));
+    Vec(std::initializer_list<OBASE> list) {
+        check(FUNCTION(igraph_vector, init_array)(ptr, INVPTRCAST(list.begin()), list.size()));
     }
 
     Vec & operator = (const Vec &other) {
@@ -82,19 +82,19 @@ public:
     operator igraph_type *() { return ptr; }
     operator const igraph_type *() const { return ptr; }
 
-    iterator begin() { return ptr->stor_begin; }
-    iterator end() { return ptr->end; }
+    iterator begin() { return PTRCAST(ptr->stor_begin); }
+    iterator end() { return PTRCAST(ptr->end); }
 
-    const_iterator begin() const { return ptr->stor_begin; }
-    const_iterator end() const { return ptr->end; }
+    const_iterator begin() const { return PTRCAST(ptr->stor_begin); }
+    const_iterator end() const { return PTRCAST(ptr->end); }
 
-    const_iterator cbegin() const { return ptr->stor_begin; }
-    const_iterator cend() const { return ptr->end; }
+    const_iterator cbegin() const { return begin(); }
+    const_iterator cend() const { return end(); }
 
     value_type *data() { return begin(); }
 
-    reference &back() { return *(ptr->end-1); }
-    const_reference &back() const { return *(ptr->end-1); }
+    reference &back() { return *(end() - 1); }
+    const_reference &back() const { return *(end() - 1); }
 
     size_type size() const { return ptr->end - ptr->stor_begin; }
     constexpr size_type max_size() const { return IGRAPH_INTEGER_MAX; }
@@ -110,16 +110,16 @@ public:
     void reserve(size_type capacity) { check(FUNCTION(igraph_vector, reserve)(ptr, capacity)); }
     void shrink_to_fit() { FUNCTION(igraph_vector, resize_min)(ptr); }
 
-    void push_back(value_type elem) { check(FUNCTION(igraph_vector, push_back)(ptr, elem)); }
-    value_type pop_back() { return FUNCTION(igraph_vector, pop_back)(ptr); }
+    void push_back(value_type elem) { check(FUNCTION(igraph_vector, push_back)(ptr, REFCAST(elem))); }
+    value_type pop_back() { return REFCAST(FUNCTION(igraph_vector, pop_back)(ptr)); }
 
     iterator erase(const_iterator pos) {
-        FUNCTION(igraph_vector, remove)(ptr, pos - ptr->stor_begin);
+        FUNCTION(igraph_vector, remove)(ptr, INVPTRCAST(pos) - ptr->stor_begin);
         return const_cast<iterator>(pos);
     }
 
     iterator erase(const_iterator first, const_iterator last) {
-        FUNCTION(igraph_vector, remove_section)(ptr, first - ptr->stor_begin, last - ptr->stor_begin);
+        FUNCTION(igraph_vector, remove_section)(ptr, INVPTRCAST(first) - ptr->stor_begin, INVPTRCAST(last) - ptr->stor_begin);
         return const_cast<iterator>(first);
     }
 
@@ -150,4 +150,4 @@ public:
     }
 };
 
-#include <igraph_pmt_off.h>
+#include <igraph_pmt_off.hpp>

@@ -9,6 +9,7 @@
 #endif
 
 #include <cassert>
+#include <complex>
 #include <iterator>
 #include <stdexcept>
 #include <type_traits>
@@ -29,6 +30,41 @@ struct Exception : std::runtime_error {
 inline void check(igraph_error_t error) {
     if (error != IGRAPH_SUCCESS)
         throw Exception{error};
+}
+
+// Casts between igraph_complex_t and std::complex<double>.
+// complex_cast() can convert in both directions between these two types.
+
+std::complex<double> &complex_cast(igraph_complex_t &c) {
+    return reinterpret_cast<std::complex<double> &>(c);
+}
+
+const std::complex<double> &complex_cast(const igraph_complex_t &c) {
+    return reinterpret_cast<const std::complex<double> &>(c);
+}
+
+std::complex<double> *complex_cast(igraph_complex_t *c) {
+    return reinterpret_cast<std::complex<double> *>(c);
+}
+
+const std::complex<double> *complex_cast(const igraph_complex_t *c) {
+    return reinterpret_cast<const std::complex<double> *>(c);
+}
+
+igraph_complex_t &complex_cast(std::complex<double> &c) {
+    return reinterpret_cast<igraph_complex_t &>(c);
+}
+
+const igraph_complex_t &complex_cast(const std::complex<double> &c) {
+    return reinterpret_cast<const igraph_complex_t &>(c);
+}
+
+igraph_complex_t *complex_cast(std::complex<double> *c) {
+    return reinterpret_cast<igraph_complex_t *>(c);
+}
+
+const igraph_complex_t *complex_cast(const std::complex<double> *c) {
+    return reinterpret_cast<const igraph_complex_t *>(c);
 }
 
 // Support structures
@@ -85,6 +121,13 @@ using IntVecList = VecList<igraph_integer_t>;
 #undef BASE_BOOL
 using BoolVec = Vec<igraph_bool_t>;
 using BoolMat = Mat<igraph_bool_t>;
+
+#define BASE_COMPLEX
+#include "vec_pmt.hpp"
+#include "mat_pmt.hpp"
+#undef BASE_COMPLEX
+using ComplexVec = Vec<std::complex<double>>;
+using ComplexMat = Mat<std::complex<double>>;
 
 #include "rng_scope.hpp"
 

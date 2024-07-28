@@ -1,7 +1,7 @@
 
-#include <igraph_pmt.h>
+#include <igraph_pmt.hpp>
 
-template<> class Mat<BASE> {
+template<> class Mat<OBASE> {
     using igraph_type = TYPE(igraph_matrix);
 
     igraph_type mat;
@@ -9,14 +9,14 @@ template<> class Mat<BASE> {
 
     bool is_alias() const { return ptr != &mat; }
 
-    friend class MatList<BASE>;
+    friend class MatList<OBASE>;
 
 public:
-    using value_type = BASE;
-    using reference = BASE &;
-    using const_reference = const BASE &;
-    using iterator = BASE *;
-    using const_iterator = const BASE *;
+    using value_type = OBASE;
+    using reference = OBASE &;
+    using const_reference = const OBASE &;
+    using iterator = OBASE *;
+    using const_iterator = const OBASE *;
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
@@ -62,7 +62,7 @@ public:
         return *this;
     }
 
-    Mat(std::initializer_list<std::initializer_list<BASE>> values) {
+    Mat(std::initializer_list<std::initializer_list<OBASE>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;
         check(FUNCTION(igraph_matrix, init)(ptr, n, m));
@@ -72,7 +72,7 @@ public:
             assert(row.size() == (size_t) m);
             size_type j = 0;
             for (const auto &el : row) {
-                MATRIX(*ptr, i, j) = el;
+                MATRIX(*ptr, i, j) = REFCAST(el);
                 j++;
             }
             i++;
@@ -88,14 +88,14 @@ public:
     operator igraph_type *() { return ptr; }
     operator const igraph_type *() const { return ptr; }
 
-    iterator begin() { return ptr->data.stor_begin; }
-    iterator end() { return ptr->data.end; }
+    iterator begin() { return PTRCAST(ptr->data.stor_begin); }
+    iterator end() { return PTRCAST(ptr->data.end); }
 
-    const_iterator begin() const { return ptr->data.stor_begin; }
-    const_iterator end() const { return ptr->data.end; }
+    const_iterator begin() const { return PTRCAST(ptr->data.stor_begin); }
+    const_iterator end() const { return PTRCAST(ptr->data.end); }
 
-    const_iterator cbegin() const { return ptr->data.stor_begin; }
-    const_iterator cend() const { return ptr->data.end; }
+    const_iterator cbegin() const { return begin(); }
+    const_iterator cend() const { return end(); }
 
     value_type *data() { return begin(); }
 
@@ -111,12 +111,13 @@ public:
     reference operator [] (size_type i) { return begin()[i]; }
     const_reference operator [] (size_type i) const { return begin()[i]; }
 
-    reference operator () (size_type i, size_type j) { return MATRIX(*ptr, i, j); }
-    const_reference operator () (size_type i, size_type j) const { return MATRIX(*ptr, i, j); }
+    reference operator () (size_type i, size_type j) { return REFCAST(MATRIX(*ptr, i, j)); }
+    const_reference operator () (size_type i, size_type j) const { return REFCAST(MATRIX(*ptr, i, j)); }
 
     void resize(size_type n, size_type m) { check(FUNCTION(igraph_matrix, resize)(ptr, n, m)); }
     void shrink_to_fit() { FUNCTION(igraph_matrix, resize_min)(ptr); }
 
+    void transpose() { FUNCTION(igraph_matrix, transpose)(ptr); }
 
     friend void swap(Mat &m1, Mat &m2) noexcept {
         FUNCTION(igraph_matrix, swap)(m1.ptr, m2.ptr);
@@ -145,4 +146,4 @@ public:
     }
 };
 
-#include <igraph_pmt_off.h>
+#include <igraph_pmt_off.hpp>
