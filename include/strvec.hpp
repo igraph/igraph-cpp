@@ -1,13 +1,8 @@
 
 class StrVec {
+public:
     using igraph_type = igraph_strvector_t;
 
-    igraph_type vec;
-    igraph_type *ptr = &vec;
-
-    bool is_alias() const { return ptr != &vec; }
-
-public:
     using value_type = const char *;
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
@@ -35,6 +30,13 @@ public:
     class iterator;
     using const_iterator = iterator;
 
+private:
+    igraph_type vec;
+    igraph_type *ptr = &vec;
+
+    bool is_alias() const { return ptr != &vec; }
+
+public:
     explicit StrVec(CaptureType<igraph_type> v) : vec(v.obj) { }
     explicit StrVec(AliasType<igraph_type> v) : ptr(&v.obj) { }
 

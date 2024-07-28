@@ -10,8 +10,18 @@
 // To create a Vec that aliases v, use Vec(Alias(v)). To take over the ownership of
 // v's data, use Vec(Capture(v)). In the latter case, v must no longer be used directly.
 template<> class Vec<OBASE> {
+public:
     using igraph_type = TYPE(igraph_vector);
 
+    using value_type = OBASE;
+    using reference = value_type &;
+    using const_reference = const value_type &;
+    using iterator = value_type *;
+    using const_iterator = const value_type *;
+    using difference_type = igraph_integer_t;
+    using size_type = igraph_integer_t;
+
+private:
     igraph_type vec;
     igraph_type *ptr = &vec;
 
@@ -20,14 +30,6 @@ template<> class Vec<OBASE> {
     friend class VecList<OBASE>;
 
 public:
-    using value_type = OBASE;
-    using reference = OBASE &;
-    using const_reference = const OBASE &;
-    using iterator = OBASE *;
-    using const_iterator = const OBASE *;
-    using difference_type = igraph_integer_t;
-    using size_type = igraph_integer_t;
-
     explicit Vec(CaptureType<igraph_type> v) : vec(v.obj) { }
     explicit Vec(AliasType<igraph_type> v) : ptr(&v.obj) { }
 
@@ -52,7 +54,7 @@ public:
         check(FUNCTION(igraph_vector, init_copy)(ptr, v));
     }
 
-    Vec(std::initializer_list<OBASE> list) {
+    Vec(std::initializer_list<value_type> list) {
         check(FUNCTION(igraph_vector, init_array)(ptr, INVPTRCAST(list.begin()), list.size()));
     }
 

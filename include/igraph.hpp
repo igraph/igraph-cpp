@@ -138,8 +138,10 @@ using ComplexMat = Mat<std::complex<igraph_real_t>>;
 class GraphList;
 
 class Graph {
+public:
     using igraph_type = igraph_t;
 
+private:
     igraph_t graph;
     igraph_t *ptr = &graph;
 

@@ -2,8 +2,18 @@
 #include <igraph_pmt.hpp>
 
 template<> class Mat<OBASE> {
+public:
     using igraph_type = TYPE(igraph_matrix);
 
+    using value_type = OBASE;
+    using reference = value_type &;
+    using const_reference = const value_type &;
+    using iterator = value_type *;
+    using const_iterator = const value_type *;
+    using difference_type = igraph_integer_t;
+    using size_type = igraph_integer_t;
+
+private:
     igraph_type mat;
     igraph_type *ptr = &mat;
 
@@ -12,14 +22,6 @@ template<> class Mat<OBASE> {
     friend class MatList<OBASE>;
 
 public:
-    using value_type = OBASE;
-    using reference = OBASE &;
-    using const_reference = const OBASE &;
-    using iterator = OBASE *;
-    using const_iterator = const OBASE *;
-    using difference_type = igraph_integer_t;
-    using size_type = igraph_integer_t;
-
     explicit Mat(CaptureType<igraph_type> m) : mat(m.obj) { }
     explicit Mat(AliasType<igraph_type> m) : ptr(&m.obj) { }
 
@@ -62,7 +64,7 @@ public:
         return *this;
     }
 
-    Mat(std::initializer_list<std::initializer_list<OBASE>> values) {
+    Mat(std::initializer_list<std::initializer_list<value_type>> values) {
         size_type n = values.size();
         size_type m = n > 0 ? values.begin()->size() : 0;
         check(FUNCTION(igraph_matrix, init)(ptr, n, m));

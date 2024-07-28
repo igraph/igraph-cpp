@@ -26,7 +26,6 @@ public:
 
     RNGScope() : RNGScope(default_type) { }
 
-public:
     // We shouldn't be copying or moving an RNGScope object, as this defeats the logic provided by scoping.
     RNGScope(const RNGScope &) = delete;
     RNGScope & operator = (const RNGScope&) = delete;

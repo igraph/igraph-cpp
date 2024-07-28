@@ -5,14 +5,9 @@
 template<>
 #endif
 class LIST_TYPE_TEMPL {
+public:
     using igraph_type = TYPE;
 
-    igraph_type list;
-    igraph_type *ptr = &list;
-
-    bool is_alias() const { return ptr != &list; }
-
-public:
     using value_type = ELEM_TYPE;
     using reference = value_type;
     using const_reference = const reference;
@@ -23,6 +18,13 @@ public:
     using iterator = base_iterator<value_type, reference>;
     using const_iterator = base_iterator<const value_type, const_reference>;
 
+private:
+    igraph_type list;
+    igraph_type *ptr = &list;
+
+    bool is_alias() const { return ptr != &list; }
+
+public:
     explicit LIST_TYPE(CaptureType<igraph_type> tl) : list(tl.obj) { }
     explicit LIST_TYPE(AliasType<igraph_type> tl) : ptr(&tl.obj) { }
 
