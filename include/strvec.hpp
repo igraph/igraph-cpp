@@ -7,24 +7,7 @@ public:
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
-    class reference {
-        friend class StrVec;
-        StrVec::igraph_type *ptr;
-        StrVec::size_type index;
-
-        reference(StrVec::igraph_type *ptr_,StrVec::size_type index_) : ptr(ptr_), index(index_) { }
-
-    public:
-
-        operator StrVec::value_type () const { return igraph_strvector_get(ptr, index); }
-
-        // See https://stackoverflow.com/a/66931919/695132 for why the ref-qualifier is used.
-        reference & operator = (const char *chr) && {
-            check(igraph_strvector_set(ptr, index, chr));
-            return *this;
-        }
-    };
-
+    class reference;
     using const_reference = const reference;
 
     class iterator;
@@ -61,7 +44,7 @@ public:
         check(igraph_strvector_init_copy(ptr, v));
     }
 
-    StrVec(std::initializer_list<const char *> list) {
+    StrVec(std::initializer_list<value_type> list) {
         check(igraph_strvector_init(ptr, 0));
         check(igraph_strvector_reserve(ptr, list.size()));
         for (auto el : list) {
@@ -89,8 +72,8 @@ public:
     const_iterator cbegin() const;
     const_iterator cend() const;
 
-    reference operator [] (size_type i) { return {ptr, i}; }
-    const_reference operator [] (size_type i) const { return {ptr, i}; }
+    reference operator [] (size_type i);
+    const_reference operator [] (size_type i) const;
 
     reference back();
     const_reference back() const;
@@ -115,6 +98,24 @@ public:
     // There is no igraph_strvector_pop_back(), so we skip it here as well.
 
     // TODO swap() 1.0
+};
+
+class StrVec::reference {
+    friend class StrVec;
+    StrVec::igraph_type *ptr;
+    StrVec::size_type index;
+
+    reference(StrVec::igraph_type *ptr_, StrVec::size_type index_) : ptr(ptr_), index(index_) { }
+
+public:
+
+    operator StrVec::value_type () const { return igraph_strvector_get(ptr, index); }
+
+    // See https://stackoverflow.com/a/66931919/695132 for why the ref-qualifier is used.
+    reference & operator = (StrVec::value_type chr) && {
+        check(igraph_strvector_set(ptr, index, chr));
+        return *this;
+    }
 };
 
 class StrVec::iterator {
@@ -195,6 +196,14 @@ public:
 
     // TODO iter_swap() 1.0
 };
+
+StrVec::reference StrVec::operator [] (StrVec::size_type i) {
+    return {ptr, i};
+}
+
+StrVec::const_reference StrVec::operator [] (StrVec::size_type i) const {
+    return {ptr, i};
+}
 
 StrVec::iterator StrVec::begin() {
     return iterator(ptr, 0);

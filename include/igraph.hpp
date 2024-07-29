@@ -18,7 +18,7 @@
 
 namespace ig {
 
-// Error handling
+// Error handling and exceptions
 
 struct Exception : std::runtime_error {
     igraph_error_t error;

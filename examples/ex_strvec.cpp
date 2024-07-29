@@ -23,8 +23,10 @@ int main() {
     // Equivalent to igraph_strvector_set():
     sv[5] = "xyz";
 
+    // Print the string vector
     for (auto el : sv)
         std::cout << '"' << el << '"' << '\n';
+    std::cout << std::endl;
 
     // Note tha this class uses proxy iterator and reference classes, therefore it is
     // only possible to _read_ it (but not _write_) using a range-based for loop with
@@ -34,6 +36,11 @@ int main() {
     for (auto &el : sv)
         el = "abc";
     */
+
+    // Erase all but the first 3 elements
+    sv.erase(sv.begin()+3, sv.end());
+
+    std::cout << "Last element after erasing all but the first 3: " << '"' << sv.back() << '"' << std::endl;
 
     return 0;
 }
