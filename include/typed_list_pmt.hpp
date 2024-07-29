@@ -5,6 +5,8 @@
 template<>
 #endif
 class LIST_TYPE_TEMPL {
+    template<typename ValueType, typename Reference> class base_iterator;
+    
 public:
     using igraph_type = TYPE;
 
@@ -14,7 +16,6 @@ public:
     using difference_type = igraph_integer_t;
     using size_type = igraph_integer_t;
 
-    template<typename ValueType, typename Reference> class base_iterator;
     using iterator = base_iterator<value_type, reference>;
     using const_iterator = base_iterator<const value_type, const_reference>;
 

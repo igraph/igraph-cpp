@@ -1,5 +1,7 @@
 
 class StrVec {
+    template<typename Reference> class base_iterator;
+
 public:
     using igraph_type = igraph_strvector_t;
 
@@ -10,8 +12,8 @@ public:
     class reference;
     using const_reference = const reference;
 
-    class iterator;
-    using const_iterator = iterator;
+    using iterator = base_iterator<reference>;
+    using const_iterator = base_iterator<const_reference>;
 
 private:
     igraph_type vec;
@@ -118,12 +120,13 @@ public:
     }
 };
 
-class StrVec::iterator {
+template<typename Reference>
+class StrVec::base_iterator {
 public:
     using value_type = StrVec::value_type;
     using difference_type = StrVec::difference_type;
     using pointer = void;
-    using reference = StrVec::reference;
+    using reference = Reference;
     using iterator_category = std::random_access_iterator_tag;
 
     friend class StrVec;
@@ -132,65 +135,69 @@ private:
     igraph_strvector_t *ptr;
     igraph_integer_t index;
 
-    iterator(igraph_strvector_t *ptr_, igraph_integer_t index_) : ptr(ptr_), index(index_) { }
+    base_iterator(igraph_strvector_t *ptr_, igraph_integer_t index_) : ptr(ptr_), index(index_) { }
 
 public:
 
-    iterator() = default;
-    iterator(const iterator &) = default;
-    iterator(iterator &&) = default;
-    iterator & operator = (const iterator &) = default;
-    iterator & operator = (iterator &&) = default;
+    base_iterator() = default;
+
+    // Make iterator convertible to const_iterator
+    base_iterator(const base_iterator<typename std::remove_const<Reference>::type> &it) :
+        ptr(it.ptr), index(it.index) { }
+
+    base_iterator(base_iterator &&) = default;
+    base_iterator & operator = (const base_iterator &) = default;
+    base_iterator & operator = (base_iterator &&) = default;
 
     reference operator * () { return {ptr, index}; }
     reference operator * () const { return {ptr, index}; }
     reference operator [] (difference_type i) const { return {ptr, index + i}; }
 
-    iterator & operator ++ () { ++index; return *this; }
-    iterator operator ++ (int) { ++index; return *this; }
-    iterator & operator -- () { --index; return *this; }
-    iterator operator -- (int) { --index; return *this; }
+    base_iterator & operator ++ () { ++index; return *this; }
+    base_iterator operator ++ (int) { ++index; return *this; }
+    base_iterator & operator -- () { --index; return *this; }
+    base_iterator operator -- (int) { --index; return *this; }
 
-    iterator & operator += (difference_type n) { index += n; return *this; }
-    iterator & operator -= (difference_type n) { index -= n; return *this; }
+    base_iterator & operator += (difference_type n) { index += n; return *this; }
+    base_iterator & operator -= (difference_type n) { index -= n; return *this; }
 
-    friend bool operator == (const iterator &lhs, const iterator &rhs) {
+    friend bool operator == (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index == rhs.index;
     }
 
-    friend bool operator != (const iterator &lhs, const iterator &rhs) {
+    friend bool operator != (const base_iterator &lhs, const base_iterator &rhs) {
         return ! (lhs == rhs);
     }
 
-    friend bool operator < (const iterator &lhs, const iterator &rhs) {
+    friend bool operator < (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index < rhs.index;
     }
 
-    friend bool operator > (const iterator &lhs, const iterator &rhs) {
+    friend bool operator > (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index > rhs.index;
     }
 
-    friend bool operator <= (const iterator &lhs, const iterator &rhs) {
+    friend bool operator <= (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index <= rhs.index;
     }
 
-    friend bool operator >= (const iterator &lhs, const iterator &rhs) {
+    friend bool operator >= (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index >= rhs.index;
     }
 
-    friend iterator operator + (const iterator &it, difference_type n) {
-        return iterator(it.ptr, it.index + n);
+    friend base_iterator operator + (const base_iterator &it, difference_type n) {
+        return base_iterator(it.ptr, it.index + n);
     }
 
-    friend iterator operator + (difference_type n, const iterator &it) {
-        return iterator(it.ptr, it.index + n);
+    friend base_iterator operator + (difference_type n, const base_iterator &it) {
+        return base_iterator(it.ptr, it.index + n);
     }
 
-    friend iterator operator - (const iterator &it, difference_type n) {
-        return iterator(it.ptr, it.index - n);
+    friend base_iterator operator - (const base_iterator &it, difference_type n) {
+        return base_iterator(it.ptr, it.index - n);
     }
 
-    friend difference_type operator - (const iterator &lhs, const iterator &rhs) {
+    friend difference_type operator - (const base_iterator &lhs, const base_iterator &rhs) {
         return lhs.index - rhs.index;
     }
 
@@ -214,11 +221,11 @@ StrVec::iterator StrVec::end() {
 }
 
 StrVec::const_iterator StrVec::begin() const {
-    return iterator(ptr, 0);
+    return const_iterator(ptr, 0);
 }
 
 StrVec::const_iterator StrVec::end() const {
-    return iterator(ptr, ptr->end - ptr->stor_begin);
+    return const_iterator(ptr, ptr->end - ptr->stor_begin);
 }
 
 StrVec::const_iterator StrVec::cbegin() const {
@@ -239,10 +246,10 @@ StrVec::const_reference StrVec::back() const {
 
 StrVec::iterator StrVec::erase(const_iterator first, const_iterator last) {
     igraph_strvector_remove_section(ptr, first.index, last.index);
-    return first;
+    return {first.ptr, first.index};
 }
 
 StrVec::iterator StrVec::erase(const_iterator pos) {
     igraph_strvector_remove(ptr, pos.index);
-    return pos;
+    return {pos.ptr, pos.index};
 }
