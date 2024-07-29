@@ -144,7 +144,7 @@ public:
 
     reference operator * () { return {ptr, index}; }
     reference operator * () const { return {ptr, index}; }
-    reference operator [] (difference_type i) const { return {ptr, index}; }
+    reference operator [] (difference_type i) const { return {ptr, index + i}; }
 
     iterator & operator ++ () { ++index; return *this; }
     iterator operator ++ (int) { ++index; return *this; }
