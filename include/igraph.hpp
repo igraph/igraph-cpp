@@ -135,6 +135,12 @@ using ComplexMat = Mat<std::complex<igraph_real_t>>;
 
 #include "strvec.hpp"
 
+#include "bitset.hpp"
+
+#define BASE_BITSET
+#include "bitset_list_pmt.hpp"
+#undef BASE_BITSET
+
 #include "graph.hpp"
 
 #define BASE_GRAPH

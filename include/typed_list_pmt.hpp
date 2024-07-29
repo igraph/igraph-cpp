@@ -1,7 +1,7 @@
 
 #include <igraph_pmt.h>
 
-#ifndef GRAPH_LIST
+#if !defined(GRAPH_LIST) && !defined(BITSET_LIST)
 template<>
 #endif
 class LIST_TYPE_TEMPL {
