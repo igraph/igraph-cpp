@@ -51,7 +51,7 @@ public:
         return *this;
     }
 
-    Mat & operator = (Mat &&other) noexcept {
+    Mat & operator = (Mat &&other) && noexcept {
         if (! is_alias())
             FUNCTION(igraph_matrix, destroy)(ptr);
         if (other.is_alias()) {

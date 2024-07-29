@@ -6,7 +6,7 @@ template<>
 #endif
 class LIST_TYPE_TEMPL {
     template<typename ValueType, typename Reference> class base_iterator;
-    
+
 public:
     using igraph_type = TYPE;
 
@@ -46,7 +46,7 @@ public:
 
     LIST_TYPE & operator = (const LIST_TYPE &other) = delete;
 
-    LIST_TYPE & operator = (LIST_TYPE &&other) noexcept {
+    LIST_TYPE & operator = (LIST_TYPE &&other) && noexcept {
         if (! is_alias())
             FUNCTION(destroy)(ptr);
         if (other.is_alias()) {

@@ -42,7 +42,7 @@ public:
 
     Graph & operator = (const Graph &) = delete;
 
-    Graph & operator = (Graph &&other) noexcept {
+    Graph & operator = (Graph &&other) && noexcept {
         if (! is_alias())
             igraph_destroy(ptr);
         if (other.is_alias()) {

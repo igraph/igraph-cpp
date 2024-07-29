@@ -63,7 +63,7 @@ public:
         return *this;
     }
 
-    Vec & operator = (Vec &&other) noexcept {
+    Vec & operator = (Vec &&other) && noexcept {
         if (! is_alias())
             FUNCTION(igraph_vector, destroy)(ptr);
         if (other.is_alias()) {
