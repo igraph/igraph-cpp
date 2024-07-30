@@ -217,7 +217,7 @@ StrVec::iterator StrVec::begin() {
 }
 
 StrVec::iterator StrVec::end() {
-    return iterator(ptr, ptr->end - ptr->stor_begin);
+    return iterator(ptr, size());
 }
 
 StrVec::const_iterator StrVec::begin() const {
@@ -225,7 +225,7 @@ StrVec::const_iterator StrVec::begin() const {
 }
 
 StrVec::const_iterator StrVec::end() const {
-    return const_iterator(ptr, ptr->end - ptr->stor_begin);
+    return const_iterator(ptr, size());
 }
 
 StrVec::const_iterator StrVec::cbegin() const {
